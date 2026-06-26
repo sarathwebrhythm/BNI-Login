@@ -33,13 +33,13 @@ export function LoginForm() {
     const newErrors: FormErrors = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = "*Email is required";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
     }
 
     if (!formData.password) {
-      newErrors.password = "*Password is required";
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
@@ -59,15 +59,20 @@ export function LoginForm() {
     try {
       const res = await loginMember(formData.email, formData.password);
 
-      if (res.success && res.token) {
-        // Store token
-        if (formData.rememberMe) {
-          localStorage.setItem("member_token", res.token);
-          localStorage.setItem("member", JSON.stringify(res.member));
-        } else {
-          sessionStorage.setItem("member_token", res.token);
-          sessionStorage.setItem("member", JSON.stringify(res.member));
-        }
+      if (res.success && res.token && res.member) {
+        const base = process.env.NEXT_PUBLIC_STORAGE_URL || "";
+        const toUrl = (path?: string) => path ? (path.startsWith("http") ? path : `${base}${path}`) : undefined;
+
+        // Convert raw paths to full URLs before saving
+        const member = {
+          ...res.member,
+          profile_photo: toUrl(res.member.profile_photo),
+          cover_photo: toUrl(res.member.cover_photo),
+          business_logo: toUrl(res.member.business_logo),
+        };
+
+        localStorage.setItem("member_token", res.token);
+        localStorage.setItem("member", JSON.stringify(member));
 
         // Redirect to dashboard
         router.push("/dashboard");
@@ -171,7 +176,7 @@ export function LoginForm() {
               w-full h-[52px] pl-11 pr-12
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
-              text-[13px]
+              text-[13px] font-medium tracking-[0.22em]
               outline-none
               focus:bg-white/14
               transition-all duration-200

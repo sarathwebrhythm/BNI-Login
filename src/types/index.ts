@@ -16,8 +16,11 @@ export interface Member {
   email: string;
   phone: string;
   company?: string;
+  address?: string;
   chapter?: string;
   designation?: string;
   status?: string;
   profile_photo?: string;
+  cover_photo?: string;
+  business_logo?: string;
 }

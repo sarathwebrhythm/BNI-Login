@@ -14,6 +14,9 @@ export interface LoginResponse {
     chapter?: string;
     designation?: string;
     profile_photo?: string;
+    cover_photo?: string;
+  business_logo?: string;
+    
   };
 }
 
@@ -21,6 +24,11 @@ export interface ApiResponse {
   success: boolean;
   message: string;
   photo_url?: string;
+  cover_url?: string;
+  logo_url?: string;
+  categories?: { id: number; name: string }[];
+  offers?: any[];
+  offer?: any;
 }
 
 export async function loginMember(
@@ -42,6 +50,34 @@ export async function uploadProfilePhoto(
   const formData = new FormData();
   formData.append("photo", file);
   const res = await fetch(`${API_BASE_URL}/member/update-profile-photo`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  return res.json();
+}
+
+export async function uploadCoverPhoto(
+  file: File,
+  token: string
+): Promise<ApiResponse> {
+  const formData = new FormData();
+  formData.append("cover", file);
+  const res = await fetch(`${API_BASE_URL}/member/update-cover-photo`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  return res.json();
+}
+
+export async function uploadBusinessLogo(
+  file: File,
+  token: string
+): Promise<ApiResponse> {
+  const formData = new FormData();
+  formData.append("logo", file);
+  const res = await fetch(`${API_BASE_URL}/member/update-business-logo`, {
     method: "POST",
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
     body: formData,
@@ -76,6 +112,40 @@ export async function resetPassword(
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ email, password, password_confirmation }),
+  });
+  return res.json();
+}
+// Get offer categories
+export async function getOfferCategories(token: string): Promise<ApiResponse> {
+  const res = await fetch(`${API_BASE_URL}/member/offer-categories`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
+// Create offer
+export async function createOffer(formData: FormData, token: string): Promise<ApiResponse> {
+  const res = await fetch(`${API_BASE_URL}/member/offers`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  return res.json();
+}
+
+// Get member offers
+export async function getMemberOffers(token: string): Promise<ApiResponse> {
+  const res = await fetch(`${API_BASE_URL}/member/offers`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
+// Delete offer
+export async function deleteOffer(id: number, token: string): Promise<ApiResponse> {
+  const res = await fetch(`${API_BASE_URL}/member/offers/${id}`, {
+    method: "DELETE",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
   return res.json();
 }
