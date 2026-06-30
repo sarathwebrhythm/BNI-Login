@@ -13,7 +13,6 @@ interface Category {
 }
 
 interface OfferForm {
-  title: string;
   discount: string;
   offer_category_id: string;
   description: string;
@@ -21,7 +20,6 @@ interface OfferForm {
   end_date: string;
   terms: string[];
   contact_number: string;
-  order: string;
 }
 
 export default function CreateOfferPage() {
@@ -37,7 +35,6 @@ export default function CreateOfferPage() {
   const imageRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<OfferForm>({
-    title: "",
     discount: "",
     offer_category_id: "",
     description: "",
@@ -45,7 +42,6 @@ export default function CreateOfferPage() {
     end_date: "",
     terms: [],
     contact_number: "",
-    order: "0",
   });
 
   useEffect(() => {
@@ -54,8 +50,8 @@ export default function CreateOfferPage() {
     if (!token) { router.push("/"); return; }
     if (memberData) setMember(JSON.parse(memberData));
 
-    // Load categories
     getOfferCategories(token).then((res) => {
+      console.log("Categories response:", res);
       if (res.success && res.categories) setCategories(res.categories);
     });
   }, [router]);
@@ -97,7 +93,6 @@ export default function CreateOfferPage() {
 
     try {
       const formData = new FormData();
-      if (form.title) formData.append("title", form.title);
       formData.append("discount", form.discount);
       if (form.offer_category_id) formData.append("offer_category_id", form.offer_category_id);
       if (form.description) formData.append("description", form.description);
@@ -105,7 +100,6 @@ export default function CreateOfferPage() {
       formData.append("end_date", form.end_date);
       form.terms.forEach((term, i) => formData.append(`terms[${i}]`, term));
       if (form.contact_number) formData.append("contact_number", form.contact_number);
-      formData.append("order", form.order || "0");
       if (imageFile) formData.append("image", imageFile);
 
       const res = await createOffer(formData, token);
@@ -138,7 +132,6 @@ export default function CreateOfferPage() {
         <TopBar />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 2xl:p-12">
 
-          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-[20px] md:text-[24px] 2xl:text-[32px] font-bold text-dark">Create New Offer</h1>
             <button
@@ -153,7 +146,6 @@ export default function CreateOfferPage() {
             </button>
           </div>
 
-          {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-[14px] font-medium flex items-center gap-2">
               <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
@@ -163,7 +155,6 @@ export default function CreateOfferPage() {
             </div>
           )}
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-[14px]">
               {error}
@@ -173,10 +164,8 @@ export default function CreateOfferPage() {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-              {/* Left Column */}
               <div className="space-y-5">
 
-                {/* Offer Image */}
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
                   <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-4">Offer Image</h2>
                   <div
@@ -209,16 +198,18 @@ export default function CreateOfferPage() {
                   <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={handleImage} />
                 </div>
 
-                {/* Terms & Conditions */}
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
-                  <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-4">Terms & Conditions</h2>
+                  <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-1">Terms & Conditions</h2>
+                  <p className="text-[11px] md:text-[12px] text-muted mb-3">
+                    Type one term, then press <span className="font-semibold text-dark">Enter</span> or click <span className="font-semibold text-dark">Add</span> to add it as a bullet point.
+                  </p>
                   <div className="flex gap-2 mb-3">
                     <input
                       type="text"
                       value={termInput}
                       onChange={(e) => setTermInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTerm(); } }}
-                      placeholder="Add a term and press Enter"
+                      placeholder="e.g. Valid only on weekdays"
                       className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] text-dark focus:outline-none focus:border-primary"
                     />
                     <button
@@ -250,11 +241,9 @@ export default function CreateOfferPage() {
                 </div>
               </div>
 
-              {/* Right Column */}
               <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
                 <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-2">Offer Details</h2>
 
-                {/* Discount */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     Discount <span className="text-red-500">*</span>
@@ -268,21 +257,6 @@ export default function CreateOfferPage() {
                   />
                 </div>
 
-                {/* Title (optional) */}
-                <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
-                    Title <span className="text-gray-400 text-[10px] normal-case">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={form.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder="e.g. Weekend Special Offer"
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                {/* Category */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     Category
@@ -299,7 +273,6 @@ export default function CreateOfferPage() {
                   </select>
                 </div>
 
-                {/* Description */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     Description <span className="text-gray-400 text-[10px] normal-case">(max 1000 chars)</span>
@@ -315,7 +288,6 @@ export default function CreateOfferPage() {
                   <p className="text-[11px] text-muted text-right mt-1">{form.description.length}/1000</p>
                 </div>
 
-                {/* Start Date */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     Start Date & Time <span className="text-red-500">*</span>
@@ -328,7 +300,6 @@ export default function CreateOfferPage() {
                   />
                 </div>
 
-                {/* End Date */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     End Date & Time <span className="text-red-500">*</span>
@@ -341,7 +312,6 @@ export default function CreateOfferPage() {
                   />
                 </div>
 
-                {/* Contact Number */}
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
                     Contact Number
@@ -355,22 +325,6 @@ export default function CreateOfferPage() {
                   />
                 </div>
 
-                {/* Order */}
-                <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    value={form.order}
-                    onChange={(e) => handleChange("order", e.target.value)}
-                    min="0"
-                    placeholder="0"
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                {/* Submit */}
                 <button
                   type="submit"
                   disabled={submitting}

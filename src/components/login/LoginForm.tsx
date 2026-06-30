@@ -57,7 +57,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await loginMember(formData.email, formData.password);
+      const res = await loginMember(formData.email, formData.password, 'inhouse');
 
       if (res.success && res.token && res.member) {
         const base = process.env.NEXT_PUBLIC_STORAGE_URL || "";

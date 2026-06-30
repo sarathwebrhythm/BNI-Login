@@ -15,8 +15,7 @@ export interface LoginResponse {
     designation?: string;
     profile_photo?: string;
     cover_photo?: string;
-  business_logo?: string;
-    
+    business_logo?: string;
   };
 }
 
@@ -26,27 +25,25 @@ export interface ApiResponse {
   photo_url?: string;
   cover_url?: string;
   logo_url?: string;
-  categories?: { id: number; name: string }[];
+  categories?: { id: number; name: string; icon?: string }[];
   offers?: any[];
   offer?: any;
 }
 
 export async function loginMember(
   email: string,
-  password: string
+  password: string,
+  type: string
 ): Promise<LoginResponse> {
   const res = await fetch(`${API_BASE_URL}/member/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, type }),
   });
   return res.json();
 }
 
-export async function uploadProfilePhoto(
-  file: File,
-  token: string
-): Promise<ApiResponse> {
+export async function uploadProfilePhoto(file: File, token: string): Promise<ApiResponse> {
   const formData = new FormData();
   formData.append("photo", file);
   const res = await fetch(`${API_BASE_URL}/member/update-profile-photo`, {
@@ -57,10 +54,7 @@ export async function uploadProfilePhoto(
   return res.json();
 }
 
-export async function uploadCoverPhoto(
-  file: File,
-  token: string
-): Promise<ApiResponse> {
+export async function uploadCoverPhoto(file: File, token: string): Promise<ApiResponse> {
   const formData = new FormData();
   formData.append("cover", file);
   const res = await fetch(`${API_BASE_URL}/member/update-cover-photo`, {
@@ -71,10 +65,7 @@ export async function uploadCoverPhoto(
   return res.json();
 }
 
-export async function uploadBusinessLogo(
-  file: File,
-  token: string
-): Promise<ApiResponse> {
+export async function uploadBusinessLogo(file: File, token: string): Promise<ApiResponse> {
   const formData = new FormData();
   formData.append("logo", file);
   const res = await fetch(`${API_BASE_URL}/member/update-business-logo`, {
@@ -115,6 +106,7 @@ export async function resetPassword(
   });
   return res.json();
 }
+
 // Get offer categories
 export async function getOfferCategories(token: string): Promise<ApiResponse> {
   const res = await fetch(`${API_BASE_URL}/member/offer-categories`, {
@@ -133,9 +125,17 @@ export async function createOffer(formData: FormData, token: string): Promise<Ap
   return res.json();
 }
 
-// Get member offers
+// Get member offers (logged-in member's own offers)
 export async function getMemberOffers(token: string): Promise<ApiResponse> {
   const res = await fetch(`${API_BASE_URL}/member/offers`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
+// Get all active offers (public feed, from all members)
+export async function getAllActiveOffers(token: string): Promise<ApiResponse> {
+  const res = await fetch(`${API_BASE_URL}/member/all-offers`, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
   return res.json();

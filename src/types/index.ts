@@ -23,4 +23,6 @@ export interface Member {
   profile_photo?: string;
   cover_photo?: string;
   business_logo?: string;
+  joining_date?: string;
+  expire_date?: string;
 }
