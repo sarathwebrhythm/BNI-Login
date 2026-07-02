@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getMemberOffers } from "@/lib/api";
 import type { Member } from "@/types";
@@ -12,6 +12,25 @@ interface BusinessHeroProps {
 export function BusinessHero({ member }: BusinessHeroProps) {
   const router = useRouter();
   const [checking, setChecking] = useState(false);
+  const [totalViews, setTotalViews] = useState(0);
+  const [totalRedemptions, setTotalRedemptions] = useState(0);
+  const [redemptionRate, setRedemptionRate] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
+    getMemberOffers(token)
+      .then((res) => {
+        if (res?.success && res.offers) {
+          const views = res.offers.reduce((sum: number, o: any) => sum + (o.views || 0), 0);
+          const redemptions = res.offers.reduce((sum: number, o: any) => sum + (o.redemptions || 0), 0);
+          const rate = views > 0 ? Math.round((redemptions / views) * 100) : 0;
+          setTotalViews(views);
+          setTotalRedemptions(redemptions);
+          setRedemptionRate(rate);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const coverPhoto = member.cover_photo
     ? member.cover_photo.startsWith("http")
@@ -45,6 +64,12 @@ export function BusinessHero({ member }: BusinessHeroProps) {
       setChecking(false);
     }
   };
+
+  const stats = [
+    { value: totalViews.toLocaleString(), label: "Total Views" },
+    { value: `${redemptionRate}%`, label: "Redemption Rate" },
+    { value: totalRedemptions.toLocaleString(), label: "Total Redemptions" },
+  ];
 
   return (
     <div className="relative w-full rounded-2xl overflow-hidden mb-6">
@@ -86,11 +111,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
           <div className="flex-1 flex flex-col justify-between h-[100px]">
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-              {[
-                { value: "12,480", label: "Total Views" },
-                { value: "18%", label: "Redemption Rate" },
-                { value: "2,248", label: "Total Redemptions" },
-              ].map((stat) => (
+              {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
                   <p className="!text-white font-bold text-[14px] md:text-[18px] 2xl:text-[24px]">{stat.value}</p>
                   <p className="!text-white !text-[12px] md:!text-[13px] 2xl:!text-[16px] mt-1">{stat.label}</p>
@@ -102,7 +123,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 className="flex items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-xl text-[12px] md:text-[15px] font-semibold whitespace-nowrap"
-                style={{ border: "1px solid #C9A84C", color: "#C9A84C", background: "transparent", borderRadius: "6px" }}
+                style={{ border: "1px solid #F8C600", color: "#F8C600", background: "transparent", borderRadius: "6px" }}
               >
                 View my page
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">

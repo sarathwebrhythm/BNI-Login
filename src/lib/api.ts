@@ -28,8 +28,36 @@ export interface ApiResponse {
   categories?: { id: number; name: string; icon?: string }[];
   offers?: any[];
   offer?: any;
+  saved?: boolean;
+  views?: number;
+  redemptions?: number;
+  saves?: number;
+  redemption_rate?: number;
 }
 
+// ============================================================
+// 401 interceptor — clears storage and redirects to login
+// ============================================================
+function handleUnauthorized() {
+  localStorage.removeItem("member_token");
+  localStorage.removeItem("member");
+  sessionStorage.removeItem("member_token");
+  sessionStorage.removeItem("member");
+  window.location.href = "/";
+}
+
+async function apiFetch(url: string, options: RequestInit = {}): Promise<any> {
+  const res = await fetch(url, options);
+  if (res.status === 401) {
+    handleUnauthorized();
+    return null;
+  }
+  return res.json();
+}
+
+// ============================================================
+// Auth — no interceptor needed (public routes)
+// ============================================================
 export async function loginMember(
   email: string,
   password: string,
@@ -39,39 +67,6 @@ export async function loginMember(
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ email, password, type }),
-  });
-  return res.json();
-}
-
-export async function uploadProfilePhoto(file: File, token: string): Promise<ApiResponse> {
-  const formData = new FormData();
-  formData.append("photo", file);
-  const res = await fetch(`${API_BASE_URL}/member/update-profile-photo`, {
-    method: "POST",
-    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-  return res.json();
-}
-
-export async function uploadCoverPhoto(file: File, token: string): Promise<ApiResponse> {
-  const formData = new FormData();
-  formData.append("cover", file);
-  const res = await fetch(`${API_BASE_URL}/member/update-cover-photo`, {
-    method: "POST",
-    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-  return res.json();
-}
-
-export async function uploadBusinessLogo(file: File, token: string): Promise<ApiResponse> {
-  const formData = new FormData();
-  formData.append("logo", file);
-  const res = await fetch(`${API_BASE_URL}/member/update-business-logo`, {
-    method: "POST",
-    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
-    body: formData,
   });
   return res.json();
 }
@@ -107,30 +102,60 @@ export async function resetPassword(
   return res.json();
 }
 
-// Get offer categories
-export async function getOfferCategories(token: string): Promise<ApiResponse> {
-  const res = await fetch(`${API_BASE_URL}/member/offer-categories`, {
-    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
-  });
-  return res.json();
-}
-
-// Create offer
-export async function createOffer(formData: FormData, token: string): Promise<ApiResponse> {
-  const res = await fetch(`${API_BASE_URL}/member/offers`, {
+// ============================================================
+// Protected routes — all use apiFetch with 401 interceptor
+// ============================================================
+export async function uploadProfilePhoto(file: File, token: string): Promise<ApiResponse> {
+  const formData = new FormData();
+  formData.append("photo", file);
+  return apiFetch(`${API_BASE_URL}/member/update-profile-photo`, {
     method: "POST",
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
     body: formData,
   });
-  return res.json();
+}
+
+export async function uploadCoverPhoto(file: File, token: string): Promise<ApiResponse> {
+  const formData = new FormData();
+  formData.append("cover", file);
+  return apiFetch(`${API_BASE_URL}/member/update-cover-photo`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+}
+
+export async function uploadBusinessLogo(file: File, token: string): Promise<ApiResponse> {
+  const formData = new FormData();
+  formData.append("logo", file);
+  return apiFetch(`${API_BASE_URL}/member/update-business-logo`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+}
+
+// Get offer categories
+export async function getOfferCategories(token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offer-categories`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Create offer
+export async function createOffer(formData: FormData, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
 }
 
 // Get member offers (logged-in member's own offers)
 export async function getMemberOffers(token: string): Promise<ApiResponse> {
-  const res = await fetch(`${API_BASE_URL}/member/offers`, {
+  return apiFetch(`${API_BASE_URL}/member/offers`, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
-  return res.json();
 }
 
 // Get all active offers (public feed, from all members)
@@ -138,17 +163,60 @@ export async function getAllActiveOffers(token: string, categoryId?: number): Pr
   const url = categoryId
     ? `${API_BASE_URL}/member/all-offers?category_id=${categoryId}`
     : `${API_BASE_URL}/member/all-offers`;
-  const res = await fetch(url, {
+  return apiFetch(url, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
-  return res.json();
 }
 
 // Delete offer
 export async function deleteOffer(id: number, token: string): Promise<ApiResponse> {
-  const res = await fetch(`${API_BASE_URL}/member/offers/${id}`, {
+  return apiFetch(`${API_BASE_URL}/member/offers/${id}`, {
     method: "DELETE",
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
-  return res.json();
+}
+
+// Get member stats
+export async function getMemberStats(token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/member-stats`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Record a view
+export async function recordOfferView(offerId: number, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/view`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Record a redemption
+export async function recordOfferRedemption(offerId: number, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/redeem`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Toggle save (save/unsave)
+export async function toggleOfferSave(offerId: number, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/save`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Check if offer is saved by current member
+export async function checkOfferSaved(offerId: number, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/saved`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+// Get offer stats (for business owner)
+export async function getOfferStats(offerId: number, token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/stats`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
 }

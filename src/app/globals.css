@@ -199,7 +199,7 @@ button, input, select, textarea { font-family: inherit; }
   .card-id-value    { font-size: clamp(19px, 1.8vw, 22px); }
   .card-meta-label  { font-size: clamp(13px, 1vw, 15px); }
   .card-meta-value  { font-size: clamp(17px, 1.5vw, 19px); }
-  .privilage-card   { padding: 30px }
+  .privilage-card   { padding: 40px }
 }
 
 @media (min-width: 1280px) {

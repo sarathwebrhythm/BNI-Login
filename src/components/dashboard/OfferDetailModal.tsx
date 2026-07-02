@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { X, MapPin, Calendar, Phone, Bookmark, Share2, ArrowRight } from "lucide-react";
 import { Playfair_Display } from "next/font/google";
 import { PrivilegeCard } from "@/components/dashboard/PrivilegeCard";
+import { toggleOfferSave, recordOfferRedemption } from "@/lib/api";
 import type { Member } from "@/types";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["700"] });
@@ -28,6 +29,8 @@ interface OfferDetailModalProps {
   onClose: () => void;
   offer: OfferModalData | null;
   member: Member;
+  isSaved?: boolean;
+  onSaveToggle?: (offerId: number, saved: boolean) => void;
 }
 
 function formatDate(dateStr?: string) {
@@ -46,8 +49,49 @@ function formatDate(dateStr?: string) {
 
 const modalWidth = "w-full max-w-[500px] md:max-w-[700px] xl:max-w-[500px] 2xl:max-w-[650px]";
 
-export default function OfferDetailModal({ isOpen, onClose, offer, member }: OfferDetailModalProps) {
+export default function OfferDetailModal({ isOpen, onClose, offer, member, isSaved = false, onSaveToggle }: OfferDetailModalProps) {
   const [showCard, setShowCard] = useState(false);
+  const [saved, setSaved] = useState(isSaved);
+  const [redeemed, setRedeemed] = useState(false);
+
+  const getToken = () => localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
+
+  // Sync saved state when prop changes
+  useEffect(() => { setSaved(isSaved); }, [isSaved]);
+
+  // Reset redeemed state when offer changes
+  useEffect(() => {
+    if (!offer) return;
+    const redeemed_offers = JSON.parse(sessionStorage.getItem("redeemed_offers") || "[]");
+    setRedeemed(redeemed_offers.includes(offer.id));
+  }, [offer]);
+
+  const handleSave = () => {
+    if (!offer) return;
+    toggleOfferSave(offer.id, getToken())
+      .then((res) => {
+        if (res?.success) {
+          setSaved(res.saved ?? !saved);
+          onSaveToggle?.(offer.id, res.saved ?? !saved);
+        }
+      })
+      .catch(() => {});
+  };
+
+const handleRedeem = () => {
+    if (!offer) return;
+    console.log("offer.id:", offer.id, typeof offer.id);
+    const redeemed_offers = JSON.parse(sessionStorage.getItem("redeemed_offers") || "[]");
+    console.log("redeemed_offers:", redeemed_offers);
+    if (!redeemed_offers.includes(offer.id)) {
+      recordOfferRedemption(offer.id, getToken()).catch(() => {});
+      redeemed_offers.push(offer.id);
+      sessionStorage.setItem("redeemed_offers", JSON.stringify(redeemed_offers));
+    }
+    setRedeemed(true);
+    setShowCard(false);
+    onClose();
+  };
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -106,6 +150,7 @@ export default function OfferDetailModal({ isOpen, onClose, offer, member }: Off
               Cancel
             </button>
             <button
+              onClick={handleRedeem}
               className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold transition"
               style={{ background: "linear-gradient(90deg, rgba(193,20,43,1) 0%, rgba(110,9,20,1) 100%)" }}
             >
@@ -260,9 +305,14 @@ export default function OfferDetailModal({ isOpen, onClose, offer, member }: Off
 
         {/* Footer */}
         <div className="flex items-center gap-2 border-t border-gray-100 bg-gray-50 px-6 py-4">
-          <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-            <Bookmark size={15} />
-            Save
+          <button
+            onClick={handleSave}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+              saved ? "bg-primary border-primary text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
+            {saved ? "Saved" : "Save"}
           </button>
           <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
             <Share2 size={15} />
