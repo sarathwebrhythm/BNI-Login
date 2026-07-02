@@ -15,6 +15,7 @@ import type { Member } from "@/types";
 export default function DashboardPage() {
   const router = useRouter();
   const [member, setMember] = useState<Member | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   useEffect(() => {
     const loadMember = () => {
@@ -50,8 +51,17 @@ export default function DashboardPage() {
                 <StatsCards />
               </div>
               <div className="mb-6"><SearchBar /></div>
-              <div className="mb-6"><TopCategories /></div>
-              <OffersGrid />
+              <div className="mb-6">
+                <TopCategories
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={(id) => setSelectedCategory(id === selectedCategory ? null : id)}
+                />
+              </div>
+              <OffersGrid
+                selectedCategory={selectedCategory}
+                onClearCategory={() => setSelectedCategory(null)}
+                member={member}
+              />
             </>
           } />
         </main>

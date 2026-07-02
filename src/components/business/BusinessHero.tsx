@@ -1,4 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getMemberOffers } from "@/lib/api";
 import type { Member } from "@/types";
 
 interface BusinessHeroProps {
@@ -6,17 +10,41 @@ interface BusinessHeroProps {
 }
 
 export function BusinessHero({ member }: BusinessHeroProps) {
-  const coverPhoto = member.cover_photo
-  ? member.cover_photo.startsWith("http")
-    ? member.cover_photo
-    : `${process.env.NEXT_PUBLIC_STORAGE_URL}${member.cover_photo}`
-  : "/images/coverphoto.jpg";
+  const router = useRouter();
+  const [checking, setChecking] = useState(false);
 
-const logoPhoto = member.business_logo
-  ? member.business_logo.startsWith("http")
-    ? member.business_logo
-    : `${process.env.NEXT_PUBLIC_STORAGE_URL}${member.business_logo}`
-  : "/images/logo.png";
+  const coverPhoto = member.cover_photo
+    ? member.cover_photo.startsWith("http")
+      ? member.cover_photo
+      : `${process.env.NEXT_PUBLIC_STORAGE_URL}${member.cover_photo}`
+    : "/images/coverphoto.jpg";
+
+  const logoPhoto = member.business_logo
+    ? member.business_logo.startsWith("http")
+      ? member.business_logo
+      : `${process.env.NEXT_PUBLIC_STORAGE_URL}${member.business_logo}`
+    : "/images/logo.png";
+
+  const handleCreateOffer = async () => {
+    setChecking(true);
+    try {
+      const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
+      const res = await getMemberOffers(token);
+      const offerCount = res.offers ? res.offers.length : 0;
+      const offerLimit = member.offer_limit ?? 1;
+
+      if (offerCount >= offerLimit) {
+        alert(`You have reached your offer limit of ${offerLimit}. Please contact admin to upgrade your package.`);
+        return;
+      }
+
+      router.push("/dashboard/offers/create");
+    } catch {
+      router.push("/dashboard/offers/create");
+    } finally {
+      setChecking(false);
+    }
+  };
 
   return (
     <div className="relative w-full rounded-2xl overflow-hidden mb-6">
@@ -44,7 +72,7 @@ const logoPhoto = member.business_logo
           {/* Business Info */}
           <div className="min-w-0 flex-shrink-0 w-[140px] md:w-[180px] 2xl:w-[240px]">
             <h2 className="text-white font-bold text-[16px] md:text-[22px] 2xl:text-[30px] leading-tight truncate">
-              {member.company || "Your Business"}
+              {member.name || "Your Business"}
             </h2>
             <p className="!text-white text-[11px] md:text-[13px] 2xl:text-[15px] mt-0.5 truncate">
               {member.address || "Trivandrum, Kerala"}
@@ -82,11 +110,12 @@ const logoPhoto = member.business_logo
                 </svg>
               </button>
               <button
-                className="flex text-white items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-xl text-[12px] md:text-[15px] font-semibold whitespace-nowrap"
+                onClick={handleCreateOffer}
+                disabled={checking}
+                className="flex text-white items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-xl text-[12px] md:text-[15px] font-semibold whitespace-nowrap disabled:opacity-70"
                 style={{ background: "#C31526", borderRadius: "6px" }}
-                onClick={() => window.location.href = '/dashboard/offers/create'}
               >
-                Create new offer
+                {checking ? "Checking..." : "Create new offer"}
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>

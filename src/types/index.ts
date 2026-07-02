@@ -25,4 +25,5 @@ export interface Member {
   business_logo?: string;
   joining_date?: string;
   expire_date?: string;
+  offer_limit?: number;
 }

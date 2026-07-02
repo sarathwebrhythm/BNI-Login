@@ -87,7 +87,7 @@ export default function CreateOfferPage() {
     if (!form.start_date) { setError("Start date is required!"); return; }
     if (!form.end_date) { setError("End date is required!"); return; }
     if (form.end_date <= form.start_date) { setError("End date must be after start date!"); return; }
-
+    if (!form.offer_category_id) { setError("Please select a category!"); return; }
     const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
     setSubmitting(true);
 

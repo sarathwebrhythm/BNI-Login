@@ -134,8 +134,11 @@ export async function getMemberOffers(token: string): Promise<ApiResponse> {
 }
 
 // Get all active offers (public feed, from all members)
-export async function getAllActiveOffers(token: string): Promise<ApiResponse> {
-  const res = await fetch(`${API_BASE_URL}/member/all-offers`, {
+export async function getAllActiveOffers(token: string, categoryId?: number): Promise<ApiResponse> {
+  const url = categoryId
+    ? `${API_BASE_URL}/member/all-offers?category_id=${categoryId}`
+    : `${API_BASE_URL}/member/all-offers`;
+  const res = await fetch(url, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
   return res.json();
