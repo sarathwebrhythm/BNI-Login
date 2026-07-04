@@ -17,7 +17,7 @@ function formatCardDate(dateStr?: string): string {
 
 export function PrivilegeCard({ member }: PrivilegeCardProps) {
   return (
-    <div
+    <div id="privilege-card"
       className="relative w-full rounded-2xl overflow-hidden"
       style={{ aspectRatio: "600/333" }}
     >

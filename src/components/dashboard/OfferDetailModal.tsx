@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { X, MapPin, Calendar, Phone, Bookmark, Share2, ArrowRight } from "lucide-react";
 import { Playfair_Display } from "next/font/google";
 import { PrivilegeCard } from "@/components/dashboard/PrivilegeCard";
+import toast from "react-hot-toast";
 import { toggleOfferSave, recordOfferRedemption } from "@/lib/api";
 import type { Member } from "@/types";
 
@@ -56,10 +57,8 @@ export default function OfferDetailModal({ isOpen, onClose, offer, member, isSav
 
   const getToken = () => localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
 
-  // Sync saved state when prop changes
   useEffect(() => { setSaved(isSaved); }, [isSaved]);
 
-  // Reset redeemed state when offer changes
   useEffect(() => {
     if (!offer) return;
     const redeemed_offers = JSON.parse(sessionStorage.getItem("redeemed_offers") || "[]");
@@ -78,16 +77,16 @@ export default function OfferDetailModal({ isOpen, onClose, offer, member, isSav
       .catch(() => {});
   };
 
-const handleRedeem = () => {
+  const handleRedeem = () => {
     if (!offer) return;
-    console.log("offer.id:", offer.id, typeof offer.id);
     const redeemed_offers = JSON.parse(sessionStorage.getItem("redeemed_offers") || "[]");
-    console.log("redeemed_offers:", redeemed_offers);
     if (!redeemed_offers.includes(offer.id)) {
       recordOfferRedemption(offer.id, getToken()).catch(() => {});
       redeemed_offers.push(offer.id);
       sessionStorage.setItem("redeemed_offers", JSON.stringify(redeemed_offers));
     }
+    toast.success(`You saved ${offer.discount} at ${offer.business_name}!`);
+    window.dispatchEvent(new Event("stats-updated"));
     setRedeemed(true);
     setShowCard(false);
     onClose();
@@ -120,7 +119,6 @@ const handleRedeem = () => {
           className={`relative ${modalWidth} bg-white rounded-2xl overflow-hidden shadow-2xl`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close */}
           <button
             onClick={() => setShowCard(false)}
             className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow hover:bg-white transition"
@@ -128,12 +126,10 @@ const handleRedeem = () => {
             <X size={18} />
           </button>
 
-          {/* Privilege Card */}
           <div className="p-1 pb-0">
             <PrivilegeCard member={member} />
           </div>
 
-          {/* Redeem info */}
           <div className="px-6 pt-5 pb-3">
             <h3 className="text-base font-bold text-dark mb-1">Show this to redeem</h3>
             <p className="text-xs text-muted leading-relaxed">
@@ -141,7 +137,6 @@ const handleRedeem = () => {
             </p>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-3 px-6 pb-6 pt-2">
             <button
               onClick={() => setShowCard(false)}
@@ -177,7 +172,6 @@ const handleRedeem = () => {
         className={`relative ${modalWidth} rounded-2xl bg-white shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close */}
         <button
           onClick={onClose}
           className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow hover:bg-white transition"
@@ -186,7 +180,7 @@ const handleRedeem = () => {
         </button>
 
         {/* Header image */}
-        <div className="relative h-70 bg-gradient-to-br from-rose-100 to-pink-50 flex items-center justify-center overflow-hidden">
+        <div className="relative h-70 2xl:h-90 bg-gradient-to-br from-rose-100 to-pink-50 flex items-center justify-center overflow-hidden">
           {imageUrl ? (
             <img src={imageUrl} alt={offer.business_name} className="w-full h-full object-cover object-top" />
           ) : (

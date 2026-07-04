@@ -21,7 +21,7 @@ export interface LoginResponse {
 
 export interface ApiResponse {
   success: boolean;
-  message: string;
+  message?: string;
   photo_url?: string;
   cover_url?: string;
   logo_url?: string;
@@ -33,6 +33,10 @@ export interface ApiResponse {
   redemptions?: number;
   saves?: number;
   redemption_rate?: number;
+  leads?: any[];
+  active_offers?: number;
+  redeemed_count?: number;
+  total_partners?: number;
 }
 
 // ============================================================
@@ -159,10 +163,12 @@ export async function getMemberOffers(token: string): Promise<ApiResponse> {
 }
 
 // Get all active offers (public feed, from all members)
-export async function getAllActiveOffers(token: string, categoryId?: number): Promise<ApiResponse> {
-  const url = categoryId
-    ? `${API_BASE_URL}/member/all-offers?category_id=${categoryId}`
-    : `${API_BASE_URL}/member/all-offers`;
+export async function getAllActiveOffers(token: string, categoryId?: number, search?: string): Promise<ApiResponse> {
+  const params = new URLSearchParams();
+  if (categoryId) params.set("category_id", String(categoryId));
+  if (search) params.set("search", search);
+  const query = params.toString();
+  const url = `${API_BASE_URL}/member/all-offers${query ? `?${query}` : ""}`;
   return apiFetch(url, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
@@ -176,12 +182,33 @@ export async function deleteOffer(id: number, token: string): Promise<ApiRespons
   });
 }
 
+// Update offer
+export async function updateOffer(id: number, formData: FormData, token: string): Promise<ApiResponse> {
+  formData.append("_method", "PUT");
+  return apiFetch(`${API_BASE_URL}/member/offers/${id}`, {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+}
+
+// Get recent leads
+export async function getRecentLeads(token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/recent-leads`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
 // Get member stats
 export async function getMemberStats(token: string): Promise<ApiResponse> {
   return apiFetch(`${API_BASE_URL}/member/member-stats`, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
 }
+
+// ============================================================
+// Offer Stats
+// ============================================================
 
 // Record a view
 export async function recordOfferView(offerId: number, token: string): Promise<ApiResponse> {

@@ -10,12 +10,14 @@ import { SearchBar } from "@/components/dashboard/SearchBar";
 import { TopCategories } from "@/components/dashboard/TopCategories";
 import { OffersGrid } from "@/components/dashboard/OffersGrids";
 import { TabSwitch } from "@/components/dashboard/TabSwitch";
+import { Footer } from "@/components/dashboard/Footer";
 import type { Member } from "@/types";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [member, setMember] = useState<Member | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const loadMember = () => {
@@ -29,6 +31,14 @@ export default function DashboardPage() {
     window.addEventListener("focus", loadMember);
     return () => window.removeEventListener("focus", loadMember);
   }, [router]);
+
+  // Scroll to a hash target (e.g. #offers-section) once the page content is ready
+  useEffect(() => {
+    if (!member) return;
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    document.getElementById(id)?.scrollIntoView({ behavior: "instant" as ScrollBehavior });
+  }, [member]);
 
   if (!member) {
     return (
@@ -50,7 +60,13 @@ export default function DashboardPage() {
                 <PrivilegeCard member={member} />
                 <StatsCards />
               </div>
-              <div className="mb-6"><SearchBar /></div>
+              <div className="mb-6">
+                <SearchBar
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={(id) => setSelectedCategory(id)}
+                  onSearch={(query) => setSearchQuery(query)}
+                />
+              </div>
               <div className="mb-6">
                 <TopCategories
                   selectedCategory={selectedCategory}
@@ -61,10 +77,12 @@ export default function DashboardPage() {
                 selectedCategory={selectedCategory}
                 onClearCategory={() => setSelectedCategory(null)}
                 member={member}
+                searchQuery={searchQuery}
               />
             </>
           } />
         </main>
+        <Footer />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { TopBar } from "@/components/dashboard/TopBar";
+import toast from "react-hot-toast";
 import {
   uploadProfilePhoto,
   uploadCoverPhoto,
@@ -74,12 +75,18 @@ export default function ProfilePage() {
           setLogoUrl(updatedMember.business_logo);
         }
       })
-      .catch((err) => console.error("Failed to fetch profile:", err));
+      .catch((err) => {
+        console.error("Failed to fetch profile:", err);
+      });
   }, [router]);
 
   const handleProfilePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !member) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Profile photo must be less than 2MB!");
+      return;
+    }
     const token =
       localStorage.getItem("member_token") ||
       sessionStorage.getItem("member_token") ||
@@ -88,12 +95,12 @@ export default function ProfilePage() {
     setUploading("photo");
     try {
       const res = await uploadProfilePhoto(file, token);
-      console.log("Profile photo response:", res);
+
       if (res.success && res.photo_url) {
         const fullUrl = `${process.env.NEXT_PUBLIC_STORAGE_URL}${res.photo_url}`;
         setPhotoUrl(fullUrl);
+        toast.success("Profile photo updated successfully!");
 
-        
         setMember((prev) =>
           prev
             ? {
@@ -117,7 +124,7 @@ export default function ProfilePage() {
         }
       }
     } catch (err) {
-      console.error("Upload failed", err);
+      toast.error("Failed to upload profile photo.");
     } finally {
       setUploading(null);
     }
@@ -127,7 +134,7 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 1 * 1024 * 1024) {
-      alert("Logo must be less than 1MB!");
+      toast.error("Logo must be less than 1MB!");
       return;
     }
     const token =
@@ -138,10 +145,11 @@ export default function ProfilePage() {
     setUploading("logo");
     try {
       const res = await uploadBusinessLogo(file, token);
-      console.log("Logo upload response:", res);
+
       if (res.success && res.logo_url) {
         const fullUrl = `${process.env.NEXT_PUBLIC_STORAGE_URL}${res.logo_url}`;
         setLogoUrl(fullUrl);
+        toast.success("Business logo updated successfully!");
         const stored =
           localStorage.getItem("member") || sessionStorage.getItem("member");
         if (stored) {
@@ -156,7 +164,7 @@ export default function ProfilePage() {
         }
       }
     } catch (err) {
-      console.error("Logo upload failed", err);
+      toast.error("Failed to upload company logo.");
     } finally {
       setUploading(null);
     }
@@ -166,7 +174,7 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      alert("Cover photo must be less than 5MB!");
+      toast.error("Cover photo must be less than 5MB!");
       return;
     }
     const token =
@@ -177,10 +185,11 @@ export default function ProfilePage() {
     setUploading("cover");
     try {
       const res = await uploadCoverPhoto(file, token);
-      console.log("Cover upload response:", res);
+
       if (res.success && res.cover_url) {
         const fullUrl = `${process.env.NEXT_PUBLIC_STORAGE_URL}${res.cover_url}`;
         setCoverUrl(fullUrl);
+        toast.success("Cover photo updated successfully!");
         const stored =
           localStorage.getItem("member") || sessionStorage.getItem("member");
         if (stored) {
@@ -191,10 +200,11 @@ export default function ProfilePage() {
           } else {
             sessionStorage.setItem("member", JSON.stringify(memberData));
           }
+          window.dispatchEvent(new Event("member-updated"));
         }
       }
     } catch (err) {
-      console.error("Cover upload failed", err);
+      toast.error("Failed to upload cover photo.");
     } finally {
       setUploading(null);
     }
@@ -243,7 +253,7 @@ export default function ProfilePage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 min-[1025px]:grid-cols-2 gap-6">
             {/* Business Section — LEFT */}
             <div className="bg-white rounded-2xl p-5 md:p-6 2xl:p-8 shadow-sm">
               <h2 className="text-[16px] md:text-[18px] 2xl:text-[24px] font-bold text-dark mb-5">
@@ -384,7 +394,7 @@ export default function ProfilePage() {
                           : "/images/logo.png"
                       }
                       alt="Logo"
-                      className="w-full h-full object-cover cursor-pointer"
+                      className="w-full h-full object-contain cursor-pointer"
                       onClick={() => logoRef.current?.click()}
                     />
                     <button

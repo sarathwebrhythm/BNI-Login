@@ -16,7 +16,7 @@ export function StatsCards() {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchStats = () => {
     const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/member/member-stats`, {
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
@@ -33,6 +33,12 @@ export function StatsCards() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchStats();
+    window.addEventListener("stats-updated", fetchStats);
+    return () => window.removeEventListener("stats-updated", fetchStats);
   }, []);
 
   const cards = [

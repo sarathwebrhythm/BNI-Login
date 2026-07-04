@@ -36,7 +36,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-full bg-gray-100 animate-pulse" />
+              <div className="w-14 h-14    rounded-full bg-gray-100 animate-pulse" />
               <div className="w-12 h-3 bg-gray-100 rounded animate-pulse" />
             </div>
           ))}
@@ -50,7 +50,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
   const visibleCategories = showAll ? categories : categories.slice(0, 7);
 
   return (
-    <div>
+    <div id="top-categories">
       <h2 className="text-[18px] font-bold text-dark mb-4">Top Categories</h2>
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
         {visibleCategories.map((cat) => {
@@ -61,7 +61,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
               onClick={() => onSelectCategory(isSelected ? null : cat.id)}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors overflow-hidden ${
+              <div className={`w-14 h-14 2xl:w-18 2xl:h-18 rounded-full border-4 !border-[#fafafa] flex items-center justify-center transition-colors overflow-hidden ${
                 isSelected ? "bg-primary" : "bg-primary/8 group-hover:bg-primary/15"
               }`}>
                 {cat.icon ? (
@@ -76,7 +76,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
                   </span>
                 )}
               </div>
-              <span className={`text-[12px] transition-colors text-center leading-tight ${
+              <span className={`text-[12px] 2xl:text-[14px] transition-colors text-center leading-tight ${
                 isSelected ? "text-primary font-semibold" : "text-muted group-hover:text-dark"
               }`}>
                 {cat.name}
@@ -91,7 +91,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
             onClick={() => setShowAll(!showAll)}
             className="flex flex-col items-center gap-2 group"
           >
-            <div className="w-14 h-14 rounded-full bg-primary/8 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
+            <div className="w-14 h-14 2xl:w-18 2xl:h-18 rounded-full border-4 !border-[#fafafa] bg-primary/8 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
               {showAll ? (
                 <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-primary">
                   <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

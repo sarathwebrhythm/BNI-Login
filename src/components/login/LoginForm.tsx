@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { loginMember } from "@/lib/api";
 
 interface FormData {
@@ -27,7 +28,7 @@ export function LoginForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string>("");
+  // const [apiError, setApiError] = useState<string>("");
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -50,18 +51,27 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError("");
+    // setApiError("");
 
     if (!validate()) return;
 
     setIsLoading(true);
 
     try {
-      const res = await loginMember(formData.email, formData.password, 'inhouse');
+      const res = await loginMember(
+        formData.email,
+        formData.password,
+        "inhouse",
+      );
 
       if (res.success && res.token && res.member) {
         const base = process.env.NEXT_PUBLIC_STORAGE_URL || "";
-        const toUrl = (path?: string) => path ? (path.startsWith("http") ? path : `${base}${path}`) : undefined;
+        const toUrl = (path?: string) =>
+          path
+            ? path.startsWith("http")
+              ? path
+              : `${base}${path}`
+            : undefined;
 
         // Convert raw paths to full URLs before saving
         const member = {
@@ -73,14 +83,15 @@ export function LoginForm() {
 
         localStorage.setItem("member_token", res.token);
         localStorage.setItem("member", JSON.stringify(member));
+        toast.success("Successfully logged in!");
 
         // Redirect to dashboard
         router.push("/dashboard");
       } else {
-        setApiError(res.message || "Login failed. Please try again.");
+        toast.error(res.message || "Login failed. Please try again.");
       }
     } catch {
-      setApiError("Network error. Please check your connection and try again.");
+      toast.error("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +102,7 @@ export function LoginForm() {
     if (field in errors) {
       setErrors((p) => ({ ...p, [field]: undefined }));
     }
-    setApiError("");
+    // setApiError("");
   };
 
   return (
@@ -101,11 +112,11 @@ export function LoginForm() {
       className="flex flex-col gap-5 w-full"
     >
       {/* API error */}
-      {apiError && (
+      {/* {apiError && (
         <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-[13px] text-center">
           {apiError}
         </div>
-      )}
+      )} */}
 
       {/* Email */}
       <div className="flex flex-col gap-2">
@@ -137,9 +148,11 @@ export function LoginForm() {
               outline-none
               focus:bg-white/14
               transition-all duration-200
-              ${errors.email
-                ? "border-red-400/70 focus:border-red-400"
-                : "border-white/22 focus:border-white/55"}
+              ${
+                errors.email
+                  ? "border-red-400/70 focus:border-red-400"
+                  : "border-white/22 focus:border-white/55"
+              }
             `}
           />
         </div>
@@ -180,9 +193,11 @@ export function LoginForm() {
               outline-none
               focus:bg-white/14
               transition-all duration-200
-              ${errors.password
-                ? "border-red-400/70 focus:border-red-400"
-                : "border-white/22 focus:border-white/55"}
+              ${
+                errors.password
+                  ? "border-red-400/70 focus:border-red-400"
+                  : "border-white/22 focus:border-white/55"
+              }
             `}
           />
           <button
@@ -224,9 +239,11 @@ export function LoginForm() {
             <div
               className={`
                 w-4 h-4 rounded-[3px] border transition-all duration-150
-                ${formData.rememberMe
-                  ? "bg-primary border-primary"
-                  : "bg-white/10 border-white/40"}
+                ${
+                  formData.rememberMe
+                    ? "bg-primary border-primary"
+                    : "bg-white/10 border-white/40"
+                }
               `}
             />
             {formData.rememberMe && (
@@ -304,9 +321,25 @@ export function LoginForm() {
 
         {isLoading ? (
           <span className="relative z-10 flex items-center gap-2">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" opacity="0.3" />
-              <path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
+            <svg
+              className="animate-spin w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="white"
+                strokeWidth="3"
+                opacity="0.3"
+              />
+              <path
+                d="M12 2a10 10 0 0110 10"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
             </svg>
             Signing in...
           </span>
