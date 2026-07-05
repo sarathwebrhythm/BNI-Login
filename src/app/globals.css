@@ -252,4 +252,6 @@ button, input, select, textarea { font-family: inherit; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
-
+button {
+  cursor: pointer;
+}

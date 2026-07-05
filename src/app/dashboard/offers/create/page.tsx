@@ -339,7 +339,7 @@ export default function CreateOfferPage() {
                   />
                 </div>
 
-                <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
+                <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm  space-y-4">
                   <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-1">
                     Terms & Conditions
                   </h2>
@@ -440,6 +440,27 @@ export default function CreateOfferPage() {
                       ))}
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                      Description{" "}
+                      <span className="text-gray-400 text-[10px] normal-case">
+                        (max 1000 chars)
+                      </span>
+                    </label>
+                    <textarea
+                      value={form.description}
+                      onChange={(e) =>
+                        handleChange("description", e.target.value)
+                      }
+                      maxLength={1000}
+                      rows={4}
+                      placeholder="Describe your offer..."
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary resize-none"
+                    />
+                    <p className="text-[11px] text-muted text-right mt-1">
+                      {form.description.length}/1000
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -447,28 +468,6 @@ export default function CreateOfferPage() {
                 <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-2">
                   Offer Details
                 </h2>
-
-                <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
-                    Description{" "}
-                    <span className="text-gray-400 text-[10px] normal-case">
-                      (max 1000 chars)
-                    </span>
-                  </label>
-                  <textarea
-                    value={form.description}
-                    onChange={(e) =>
-                      handleChange("description", e.target.value)
-                    }
-                    maxLength={1000}
-                    rows={4}
-                    placeholder="Describe your offer..."
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary resize-none"
-                  />
-                  <p className="text-[11px] text-muted text-right mt-1">
-                    {form.description.length}/1000
-                  </p>
-                </div>
 
                 <div>
                   <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">

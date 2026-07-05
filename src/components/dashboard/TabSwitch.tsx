@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { BusinessDashboard } from "./BusinessDashboard";
 import type { Member } from "@/types";
@@ -17,6 +17,17 @@ interface TabSwitchProps {
 
 export function TabSwitch({ userContent, member }: TabSwitchProps) {
   const [active, setActive] = useState("User");
+  useEffect(() => {
+  const handleSwitchToUser = () => {
+    setActive("User");
+  };
+
+  window.addEventListener("switch-user-tab", handleSwitchToUser);
+
+  return () => {
+    window.removeEventListener("switch-user-tab", handleSwitchToUser);
+  };
+}, []);
 
   return (
     <div>

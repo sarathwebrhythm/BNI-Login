@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Figtree } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import AppLoader from "@/components/AppLoader";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,6 +17,9 @@ export const metadata: Metadata = {
   title: "BNI Privilege Card — Trivandrum Member Login",
   description:
     "Sign in to your BNI Trivandrum Privilege Card account. Unlock exclusive member benefits, grow connections, and expand opportunities.",
+      icons: {
+    icon: "/images/favicon.png",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", figtree.variable)}>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        {children}
+        <AppLoader>{children}</AppLoader>
         <Toaster
           position="top-center"
           gutter={12}

@@ -129,9 +129,15 @@ export function Sidebar({ member }: SidebarProps) {
                   const id = item.href.slice(1);
 
                   if (pathname === "/dashboard") {
-                    document.getElementById(id)?.scrollIntoView({
-                      behavior: "smooth",
-                    });
+                    // Tell TabSwitch to switch back to the User tab
+                    window.dispatchEvent(new CustomEvent("switch-user-tab"));
+
+                    // Give React time to render the User tab
+                    setTimeout(() => {
+                      document.getElementById(id)?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }, 150);
                   } else {
                     router.push(`/dashboard${item.href}`);
                   }
@@ -367,7 +373,7 @@ export function Sidebar({ member }: SidebarProps) {
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-white/70 hover:text-white z-10"
+          className="absolute top-4 right-4 z-[9999] w-8 h-8 flex items-center justify-center text-white/70 hover:text-white"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
             <path
