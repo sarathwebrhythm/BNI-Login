@@ -6,9 +6,18 @@ interface PrivilegeCardProps {
   member: Member;
 }
 
+function formatCardDate(dateStr?: string): string {
+  if (!dateStr) return "—";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "—";
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month} / ${year}`;
+}
+
 export function PrivilegeCard({ member }: PrivilegeCardProps) {
   return (
-    <div
+    <div id="privilege-card"
       className="relative w-full rounded-2xl overflow-hidden"
       style={{ aspectRatio: "600/333" }}
     >
@@ -37,7 +46,7 @@ export function PrivilegeCard({ member }: PrivilegeCardProps) {
             <Image src="/images/Group 1.png" alt="Valid Through" width={10} height={10} className="w-3.5 h-3.5 md:w-5 md:h-5 xl:w-4 xl:h-4 2xl:w-6 2xl:h-6 object-contain flex-shrink-0" />
             <div>
               <p className="card-meta-label tracking-[0.15em] uppercase" style={{ color: "#f4f4f4" }}>VALID THROUGH</p>
-              <p className="card-meta-value tracking-[0.06em]" style={{ color: "#f4f4f4" }}>03 / 2027</p>
+              <p className="card-meta-value tracking-[0.06em]" style={{ color: "#f4f4f4" }}>{formatCardDate(member.expire_date)}</p>
             </div>
           </div>
           <div className="w-px h-5" style={{ background: "rgba(201,168,76,0.3)" }} />
@@ -45,7 +54,7 @@ export function PrivilegeCard({ member }: PrivilegeCardProps) {
             <Image src="/images/Group 2.png" alt="Member Since" width={10} height={10} className="w-3.5 h-3.5 md:w-5 md:h-5 xl:w-4 xl:h-4 2xl:w-6 2xl:h-6 object-contain flex-shrink-0" />
             <div>
               <p className="card-meta-label tracking-[0.15em] uppercase" style={{ color: "#f4f4f4" }}>MEMBER SINCE</p>
-              <p className="card-meta-value tracking-[0.06em]" style={{ color: "#f4f4f4" }}>JAN 2022</p>
+              <p className="card-meta-value tracking-[0.06em]" style={{ color: "#f4f4f4" }}>{formatCardDate(member.joining_date)}</p>
             </div>
           </div>
         </div>
