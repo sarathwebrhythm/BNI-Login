@@ -145,6 +145,7 @@ export function LoginForm() {
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
               text-[13px] font-medium
+               tracking-[0.22em]
               outline-none
               focus:bg-white/14
               transition-all duration-200
@@ -207,7 +208,7 @@ export function LoginForm() {
             className="absolute right-4 opacity-50 hover:opacity-80 transition-opacity duration-150 focus:outline-none rounded p-1"
           >
             <Image
-              src="/images/Vector-8.png"
+              src={showPassword ? "/images/eye-off.png" : "/images/eye.png"}
               alt={showPassword ? "Hide password" : "Show password"}
               width={18}
               height={18}
@@ -294,31 +295,11 @@ export function LoginForm() {
           group
         "
         style={{
-          background:
-            "linear-gradient(180deg, #E31E3B 0%, #C31526 55%, #A50F20 100%)",
+          background: "linear-gradient(180deg, #C31526 0%, #A50F20 100%)",
           boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25)",
+            "0 0 8px rgba(195,21,38,0.35), 0 0 20px rgba(195,21,38,0.45), 0 0 35px rgba(195,21,38,0.2)",
         }}
       >
-        {/* Inner bulb glow */}
-        <div
-          className="absolute inset-0 opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 40%, transparent 75%)",
-          }}
-          aria-hidden="true"
-        />
-        {/* Top shine highlight */}
-        <div
-          className="absolute top-0 left-4 right-4 h-px opacity-60 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
-          }}
-          aria-hidden="true"
-        />
-
         {isLoading ? (
           <span className="relative z-10 flex items-center gap-2">
             <svg
