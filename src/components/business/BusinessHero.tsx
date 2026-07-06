@@ -159,14 +159,12 @@ export function BusinessHero({ member }: BusinessHeroProps) {
 
         {/* Business card — overlaps hero */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 left-0 right-0 mx-4 md:mx-6 rounded-2xl p-4 md:p-5 2xl:p-7"
+          className="absolute top-1/2 -translate-y-1/2 left-0 right-0 mx-4 md:mx-6 rounded-2xl p-4 md:p-5 2xl:p-7 2xl:max-w-[1100px] 2xl:mx-auto"
           style={{
             backgroundImage: "url('/images/background.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "top",
             backgroundRepeat: "no-repeat",
-            margin: "auto",
-            maxWidth: "1100px",
           }}
         >
           <div className="flex items-center gap-4 md:gap-5">

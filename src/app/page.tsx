@@ -3,12 +3,12 @@ import { RightPanel } from "@/components/login/RightPanel";
 
 export default function LoginPage() {
   return (
-     <main className="min-h-screen bg-dark/20 flex items-center justify-center p-4 lg:p-6">
+     <main className="min-h-screen bg-dark/20 flex items-center justify-center ">
       <div
         className="
           w-full max-w-[1300px]
           grid grid-cols-1 lg:grid-cols-2
-          rounded-2xl overflow-hidden
+          2xl:rounded-2xl overflow-hidden
           shadow-2xl shadow-black/30
           min-h-[700px] lg:min-h-[700px]
         "
