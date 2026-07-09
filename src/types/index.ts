@@ -27,3 +27,24 @@ export interface Member {
   expire_date?: string;
   offer_limit?: number;
 }
+
+// notification types
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  type: string;
+  is_read: boolean;
+  reference_id: number;
+  created_at: string;
+}
+
+export interface NotificationResponse {
+  success: boolean;
+  notifications: Notification[];
+}
+
+export interface NotificationCountResponse {
+  success: boolean;
+  count: number;
+}

@@ -72,8 +72,8 @@ export function StatsCards() {
           </div>
           {/* Text */}
           <div className="flex-1">
-            <p className="text-[12px] text-muted">{stat.label}</p>
-            <p className="text-[20px] font-bold text-primary leading-tight">{stat.value}</p>
+            <p className="text-12 text-muted">{stat.label}</p>
+            <p className="text-xl font-bold text-primary leading-tight">{stat.value}</p>
           </div>
         </div>
       ))}

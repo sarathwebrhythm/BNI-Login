@@ -104,10 +104,10 @@ export function LeftPanel() {
               </div>
               {/* Label */}
               <div>
-                <p className="text-[13px] text-muted leading-tight font-normal">
+                <p className="text-sm text-muted leading-tight font-normal">
                   {feature.title}
                 </p>
-                <p className="text-[13px] text-muted leading-tight font-normal">
+                <p className="text-sm text-muted leading-tight font-normal">
                   {feature.subtitle}
                 </p>
               </div>

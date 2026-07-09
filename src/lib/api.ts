@@ -1,5 +1,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+import {
+  NotificationResponse,
+  NotificationCountResponse,
+} from "../types";
+
 export interface LoginResponse {
   success: boolean;
   message: string;
@@ -244,6 +249,51 @@ export async function checkOfferSaved(offerId: number, token: string): Promise<A
 // Get offer stats (for business owner)
 export async function getOfferStats(offerId: number, token: string): Promise<ApiResponse> {
   return apiFetch(`${API_BASE_URL}/member/offers/${offerId}/stats`, {
+    headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+  });
+}
+
+
+
+
+export async function getNotifications(
+  token: string
+): Promise<NotificationResponse> {
+  return apiFetch(`${API_BASE_URL}/member/notifications`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function getNotificationCount(
+  token: string
+): Promise<NotificationCountResponse> {
+  return apiFetch(`${API_BASE_URL}/member/notifications/unread-count`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function markNotificationAsRead(
+  id: number,
+  token: string
+): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/notifications/${id}/read`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+// Get member's saved offers
+export async function getSavedOffers(token: string): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/saved-offers`, {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
 }

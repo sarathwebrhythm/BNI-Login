@@ -21,10 +21,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const loadMember = () => {
-      const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token");
-      const memberData = localStorage.getItem("member") || sessionStorage.getItem("member");
-      if (!token) { router.push("/"); return; }
-      if (memberData) { setMember(JSON.parse(memberData)); }
+      const token =
+        localStorage.getItem("member_token") ||
+        sessionStorage.getItem("member_token");
+      const memberData =
+        localStorage.getItem("member") || sessionStorage.getItem("member");
+      if (!token) {
+        router.push("/");
+        return;
+      }
+      if (memberData) {
+        setMember(JSON.parse(memberData));
+      }
     };
 
     loadMember();
@@ -37,7 +45,9 @@ export default function DashboardPage() {
     if (!member) return;
     const id = window.location.hash.slice(1);
     if (!id) return;
-    document.getElementById(id)?.scrollIntoView({ behavior: "instant" as ScrollBehavior });
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "instant" as ScrollBehavior });
   }, [member]);
 
   if (!member) {
@@ -52,35 +62,40 @@ export default function DashboardPage() {
     <div className="flex min-h-screen bg-background">
       <Sidebar member={member} />
       <div className="flex-1 flex flex-col min-w-0">
-        <TopBar />
+        <TopBar member={member} />
         <main className="flex-1 overflow-y-auto p-2 md:p-4 xl:p-6 2xl:p-12">
-          <TabSwitch member={member} userContent={
-            <>
-              <div className="grid grid-cols-1 xl:grid-cols-[500px_1fr] 2xl:grid-cols-[650px_500px] gap-6 mb-6">
-                <PrivilegeCard member={member} />
-                <StatsCards />
-              </div>
-              <div className="mb-6">
-                <SearchBar
+          <TabSwitch
+            member={member}
+            userContent={
+              <>
+                <div className="grid grid-cols-1 xl:grid-cols-[500px_1fr] 2xl:grid-cols-2 gap-6 mb-6">
+                  <PrivilegeCard member={member} />
+                  <StatsCards />
+                </div>
+                <div className="mb-6">
+                  <SearchBar
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={(id) => setSelectedCategory(id)}
+                    onSearch={(query) => setSearchQuery(query)}
+                  />
+                </div>
+                <div className="mb-6">
+                  <TopCategories
+                    selectedCategory={selectedCategory}
+                    onSelectCategory={(id) =>
+                      setSelectedCategory(id === selectedCategory ? null : id)
+                    }
+                  />
+                </div>
+                <OffersGrid
                   selectedCategory={selectedCategory}
-                  onSelectCategory={(id) => setSelectedCategory(id)}
-                  onSearch={(query) => setSearchQuery(query)}
+                  onClearCategory={() => setSelectedCategory(null)}
+                  member={member}
+                  searchQuery={searchQuery}
                 />
-              </div>
-              <div className="mb-6">
-                <TopCategories
-                  selectedCategory={selectedCategory}
-                  onSelectCategory={(id) => setSelectedCategory(id === selectedCategory ? null : id)}
-                />
-              </div>
-              <OffersGrid
-                selectedCategory={selectedCategory}
-                onClearCategory={() => setSelectedCategory(null)}
-                member={member}
-                searchQuery={searchQuery}
-              />
-            </>
-          } />
+              </>
+            }
+          />
         </main>
         <Footer />
       </div>

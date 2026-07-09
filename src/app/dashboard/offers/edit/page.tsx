@@ -87,12 +87,27 @@ export default function CreateOfferPage() {
           discount: offer.discount || "",
           offer_category_id: String(offer.offer_category_id || ""),
           description: offer.description || "",
+          // start_date: offer.start_date
+          //   ? offer.start_date.replace(" ", "T").slice(0, 16)
+          //   : "",
+          // end_date: offer.end_date
+          //   ? offer.end_date.replace(" ", "T").slice(0, 16)
+          //   : "",
+
           start_date: offer.start_date
-            ? offer.start_date.replace(" ", "T").slice(0, 16)
+            ? new Date(offer.start_date)
+                .toLocaleString("sv-SE")
+                .replace(" ", "T")
+                .slice(0, 16)
             : "",
+
           end_date: offer.end_date
-            ? offer.end_date.replace(" ", "T").slice(0, 16)
+            ? new Date(offer.end_date)
+                .toLocaleString("sv-SE")
+                .replace(" ", "T")
+                .slice(0, 16)
             : "",
+
           terms: offer.terms || [],
           contact_number: offer.contact_number || "",
         });
@@ -113,16 +128,42 @@ export default function CreateOfferPage() {
     setForm((p) => ({ ...p, [field]: value }));
   };
 
+  // const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
+  //   if (file.size > 2 * 1024 * 1024) {
+  //     toast.error("Image must be less than 2MB!");
+  //     return;
+  //   }
+  //   setImageFile(file);
+  //   setImagePreview(URL.createObjectURL(file));
+  // };
+
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be less than 2MB!");
-      return;
-    }
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  };
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    toast.error("Please upload a valid image in JPG, JPEG, PNG, or WEBP format.");
+    e.target.value = "";
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error("Image size must not exceed 2 MB.");
+    e.target.value = "";
+    return;
+  }
+
+  setImageFile(file);
+  setImagePreview(URL.createObjectURL(file));
+};
 
   const addTerm = () => {
     if (!termInput.trim()) return;
@@ -237,15 +278,15 @@ export default function CreateOfferPage() {
     <div className="flex min-h-screen bg-background">
       <Sidebar member={member} />
       <div className="flex-1 flex flex-col min-w-0">
-        <TopBar />
+      <TopBar member={member} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 2xl:p-12">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-[20px] md:text-[24px] 2xl:text-[32px] font-bold text-dark">
+            <h1 className="text-xl md:text-2xl 2xl:text-32 font-bold text-dark">
               {id ? "Edit Offer" : "Create New Offer"}
             </h1>
             <button
               onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-[13px] md:text-[14px] font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm md:text-14 font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
               style={{
                 background:
                   "linear-gradient(90deg, rgba(193,20,43,1) 0%, rgba(110,9,20,1) 100%)",
@@ -269,7 +310,7 @@ export default function CreateOfferPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-5">
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
-                  <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-4">
+                  <h2 className="text-base 2xl:text-xl font-bold text-dark mb-4">
                     Offer Image
                   </h2>
                   <div
@@ -297,10 +338,10 @@ export default function CreateOfferPage() {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <p className="text-[13px] text-muted">
+                        <p className="text-sm text-muted">
                           Click to upload image
                         </p>
-                        <p className="text-[11px] text-muted mt-1">
+                        <p className="text-xs text-muted mt-1">
                           JPG, PNG up to 2MB
                         </p>
                       </div>
@@ -340,10 +381,10 @@ export default function CreateOfferPage() {
                 </div>
 
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm  space-y-4">
-                  <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-1">
+                  <h2 className="text-base 2xl:text-xl font-bold text-dark mb-1">
                     Terms & Conditions
                   </h2>
-                  <p className="text-[11px] md:text-[12px] text-muted mb-3">
+                  <p className="text-xs md:text-12 text-muted mb-3">
                     Type one term, then press{" "}
                     <span className="font-semibold text-dark">Enter</span> or
                     click <span className="font-semibold text-dark">Add</span>{" "}
@@ -361,12 +402,12 @@ export default function CreateOfferPage() {
                         }
                       }}
                       placeholder="e.g. Valid only on weekdays"
-                      className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] text-dark focus:outline-none focus:border-primary"
+                      className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 text-dark focus:outline-none focus:border-primary"
                     />
                     <button
                       type="button"
                       onClick={addTerm}
-                      className="px-4 py-2.5 bg-primary text-white rounded-xl text-[13px] font-medium hover:opacity-90"
+                      className="px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:opacity-90"
                     >
                       Add
                     </button>
@@ -376,7 +417,7 @@ export default function CreateOfferPage() {
                       {form.terms.map((term, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2 text-[13px] md:text-[14px] text-dark bg-gray-50 rounded-lg px-3 py-2"
+                          className="flex items-start gap-2 text-sm md:text-14 text-dark bg-gray-50 rounded-lg px-3 py-2"
                         >
                           <span className="text-primary mt-0.5">•</span>
                           <span className="flex-1">{term}</span>
@@ -403,13 +444,13 @@ export default function CreateOfferPage() {
                     </ul>
                   )}
                   {form.terms.length === 0 && (
-                    <p className="text-[12px] text-muted text-center py-4">
+                    <p className="text-12 text-muted text-center py-4">
                       No terms added yet
                     </p>
                   )}
 
                   <div>
-                    <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                    <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                       Discount <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -417,12 +458,12 @@ export default function CreateOfferPage() {
                       value={form.discount}
                       onChange={(e) => handleChange("discount", e.target.value)}
                       placeholder="e.g. 25% OFF, ₹100 off"
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                    <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                       Category
                     </label>
                     <select
@@ -430,7 +471,7 @@ export default function CreateOfferPage() {
                       onChange={(e) =>
                         handleChange("offer_category_id", e.target.value)
                       }
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary"
                     >
                       <option value="">Select category</option>
                       {categories.map((cat) => (
@@ -441,9 +482,9 @@ export default function CreateOfferPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                    <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                       Description{" "}
-                      <span className="text-gray-400 text-[10px] normal-case">
+                      <span className="text-gray-400 text-2xs normal-case">
                         (max 1000 chars)
                       </span>
                     </label>
@@ -455,9 +496,9 @@ export default function CreateOfferPage() {
                       maxLength={1000}
                       rows={4}
                       placeholder="Describe your offer..."
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary resize-none"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary resize-none"
                     />
-                    <p className="text-[11px] text-muted text-right mt-1">
+                    <p className="text-xs text-muted text-right mt-1">
                       {form.description.length}/1000
                     </p>
                   </div>
@@ -465,36 +506,36 @@ export default function CreateOfferPage() {
               </div>
 
               <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
-                <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-2">
+                <h2 className="text-base 2xl:text-xl font-bold text-dark mb-2">
                   Offer Details
                 </h2>
 
                 <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                  <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                     Start Date & Time <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="datetime-local"
                     value={form.start_date}
                     onChange={(e) => handleChange("start_date", e.target.value)}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                  <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                     End Date & Time <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="datetime-local"
                     value={form.end_date}
                     onChange={(e) => handleChange("end_date", e.target.value)}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                  <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                     Contact Number
                   </label>
                   <input
@@ -504,12 +545,12 @@ export default function CreateOfferPage() {
                       handleChange("contact_number", e.target.value)
                     }
                     placeholder="e.g. +91 9876543210"
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm md:text-14 2xl:text-base text-dark focus:outline-none focus:border-primary"
                   />
                 </div>
 
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
-                  <h2 className="text-[15px] md:text-[16px] 2xl:text-[20px] font-bold text-dark mb-4">
+                  <h2 className="text-base 2xl:text-xl font-bold text-dark mb-4">
                     Live Preview
                   </h2>
 
@@ -517,7 +558,7 @@ export default function CreateOfferPage() {
                     <div className="w-full max-w-[300px] rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-white">
                       {/* Image */}
                       <div className="relative h-44 bg-gray-100 overflow-hidden">
-                        <span className="absolute top-3 left-3 bg-primary text-white text-[11px] font-bold px-2.5 py-1 rounded-md z-10">
+                        <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-md z-10">
                           {form.discount || "20% OFF"}
                         </span>
 
@@ -597,7 +638,7 @@ export default function CreateOfferPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3 rounded-xl text-white text-[14px] md:text-[15px] 2xl:text-[16px] font-semibold transition-all hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+                  className="w-full py-3 rounded-xl text-white text-14 md:text-base font-semibold transition-all hover:opacity-90 disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
                   style={{
                     background:
                       "linear-gradient(90deg, rgba(193,20,43,1) 0%, rgba(110,9,20,1) 100%)",
@@ -643,7 +684,7 @@ export default function CreateOfferPage() {
                   )}
                 </button>
 
-                <p className="text-[11px] md:text-[12px] text-muted text-center">
+                <p className="text-xs md:text-12 text-muted text-center">
                   {id
                     ? "Update your offer details and save the changes."
                     : "Your offer will be reviewed by admin before going live."}

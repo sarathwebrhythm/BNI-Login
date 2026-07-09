@@ -59,10 +59,10 @@ export function RightPanel({
             className="object-contain"
           />
    
-          <h2 className="text-[20px] font-bold !text-white mt-4 text-center">
+          <h2 className="text-xl font-bold !text-white mt-4 text-center">
             {title}
           </h2>
-          <p className="!text-[13px] !text-white/65 !mt-4 text-center">
+          <p className="!text-sm !text-white/65 !mt-4 text-center">
             {subtitle}
           </p>
         </div>

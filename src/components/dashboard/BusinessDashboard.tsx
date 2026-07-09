@@ -34,7 +34,7 @@ function StatusBadge({ status }: { status: string }) {
     rejected: "bg-red-100 text-red-500",
   };
   return (
-    <span className={`text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold px-2 py-0.5 rounded-full capitalize ${styles[status] || "bg-gray-100 text-gray-500"}`}>
+    <span className={`text-xs md:text-12 2xl:text-14 font-semibold px-2 py-0.5 rounded-full capitalize ${styles[status] || "bg-gray-100 text-gray-500"}`}>
       {status}
     </span>
   );
@@ -108,7 +108,7 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
       <div className="grid grid-cols-1 min-[1025px]:grid-cols-[1fr_360px] 2xl:grid-cols-[2fr_1.5fr] gap-6">
         {/* My Offers */}
         <div className="bg-white rounded-2xl p-4 md:p-5 2xl:p-8 shadow-sm">
-          <h3 className="text-[16px] md:text-[18px] 2xl:text-[24px] font-bold text-dark mb-4">
+          <h3 className="text-base md:text-lg 2xl:text-2xl font-bold text-dark mb-4">
             My Offers {!loading && `(${offers.length})`}
           </h3>
 
@@ -130,7 +130,7 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
 
           {!loading && offers.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-[13px] text-muted">No offers yet.</p>
+              <p className="text-sm text-muted">No offers yet.</p>
             </div>
           )}
 
@@ -156,31 +156,31 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] md:text-[14px] 2xl:text-[18px] font-semibold text-dark truncate">
+                        <p className="text-sm md:text-14 2xl:text-lg font-semibold text-dark truncate">
                           {offer.discount}
                         </p>
                         <div className="flex items-center gap-3 mt-1 flex-wrap">
-                          <span className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted flex items-center gap-1">
+                          <span className="text-xs md:text-12 2xl:text-14 text-muted flex items-center gap-1">
                             <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
                               <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
                               <path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                             </svg>
                             {formatDate(offer.end_date)}
                           </span>
-                          <span className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted flex items-center gap-1">
+                          <span className="text-xs md:text-12 2xl:text-14 text-muted flex items-center gap-1">
                             <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
                               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.5" />
                               <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
                             </svg>
                             {offer.views} views
                           </span>
-                          <span className="text-[11px] md:text-[12px] 2xl:text-[14px] text-primary font-semibold flex items-center gap-1">
+                          <span className="text-xs md:text-12 2xl:text-14 text-primary font-semibold flex items-center gap-1">
                             <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
                               <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 7.5M17 13l1.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                             </svg>
                             {offer.redemptions} redeemed
                           </span>
-                          <span className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted flex items-center gap-1">
+                          <span className="text-xs md:text-12 2xl:text-14 text-muted flex items-center gap-1">
                             <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
                               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="1.5" />
                             </svg>
@@ -199,7 +199,7 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
                         <div className="flex items-center gap-8 pl-[92px] pr-4 py-3">
                           <button
                             onClick={() => router.push(`/dashboard/offers/edit?id=${offer.id}`)}
-                            className="group flex items-center gap-2 text-[10px] md:text-[13px] text-[#F76715] font-medium"
+                            className="group flex items-center gap-2 text-2xs md:text-sm text-[#F76715] font-medium"
                           >
                             <span className="w-6 h-6 rounded-lg bg-[#FEEFE6] flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-[#FDE3D3] group-hover:shadow-md">
                               <img src="/images/edit.png" alt="Edit" className="w-3 h-3 object-contain transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:rotate-[-12deg]" />
@@ -208,7 +208,7 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
                           </button>
                           <button
                             onClick={() => alert("Boost is coming soon!")}
-                            className="group flex items-center gap-2 text-[10px] md:text-[13px] text-[#1750C4] font-medium"
+                            className="group flex items-center gap-2 text-2xs md:text-sm text-[#1750C4] font-medium"
                           >
                             <span className="w-6 h-6 rounded-lg bg-[#E7F1FD] flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
                               <img src="/images/boost.png" alt="Boost" className="w-3 h-3 object-contain transition-transform duration-300 group-hover:scale-110" />
@@ -217,7 +217,7 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
                           </button>
                           <button
                             onClick={() => setDeleteTarget(offer)}
-                            className="group flex items-center gap-2 text-[10px] md:text-[13px] text-[#ED0A3F] font-medium"
+                            className="group flex items-center gap-2 text-2xs md:text-sm text-[#ED0A3F] font-medium"
                           >
                             <span className="w-6 h-6 rounded-lg bg-[#FCE7E9] flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-[#FAD5DB]">
                               <img src="/images/delete.png" alt="Remove" className="w-3 h-3 object-contain transition-transform duration-300 group-hover:rotate-12" />
@@ -236,14 +236,14 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
 
         {/* Recent Leads */}
         <div className="bg-white rounded-2xl p-4 md:p-5 2xl:p-8 shadow-sm">
-          <h3 className="text-[16px] md:text-[18px] 2xl:text-[24px] font-bold text-dark mb-4">
+          <h3 className="text-base md:text-lg 2xl:text-2xl font-bold text-dark mb-4">
             Recent Leads
           </h3>
           <div className="max-h-[420px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
             {recentLeads.length === 0 && (
-              <p className="text-[13px] text-muted text-center py-8">No leads in the last 7 days.</p>
+              <p className="text-sm text-muted text-center py-8">No leads in the last 7 days.</p>
             )}
-            {recentLeads.map((lead) => {
+            {recentLeads.map((lead, index) => {
               const badgeStyles = {
                 Viewed: "bg-blue-100 text-blue-700",
                 Saved: "bg-amber-100 text-amber-700",
@@ -251,8 +251,8 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
               };
 
               return (
-                <div key={`${lead.id}-${lead.time}-${lead.action}`} className="flex items-start gap-3">
-                  <div className="w-9 h-9 md:w-10 md:h-10 2xl:w-12 2xl:h-12 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center text-[13px] font-bold text-gray-500 overflow-hidden">
+                <div key={`${lead.id}-${index}`} className="flex items-start gap-3">
+                  <div className="w-9 h-9 md:w-10 md:h-10 2xl:w-12 2xl:h-12 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center text-sm font-bold text-gray-500 overflow-hidden">
                     {lead.photo ? (
                       <img
                         src={lead.photo.startsWith("http") ? lead.photo : `${storageUrl}${lead.photo}`}
@@ -265,16 +265,16 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-[13px] md:text-[14px] 2xl:text-[16px] font-semibold text-dark truncate">
+                      <p className="text-sm md:text-14 2xl:text-base font-semibold text-dark truncate">
                         {lead.name}
                       </p>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] md:text-[11px] font-semibold whitespace-nowrap ${badgeStyles[lead.action as keyof typeof badgeStyles] || "bg-gray-100 text-gray-600"}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-2xs md:text-xs font-semibold whitespace-nowrap ${badgeStyles[lead.action as keyof typeof badgeStyles] || "bg-gray-100 text-gray-600"}`}>
                         {lead.action}
                       </span>
                     </div>
-                    <p className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted mt-1 truncate">
+                    <p className="text-xs md:text-12 2xl:text-14 text-muted mt-1 truncate">
                       {lead.discount} {lead.action}{" "}
-                      <span className="text-[11px] md:text-[11px] text-[#5CB97C] mt-1">{lead.time}</span>
+                      <span className="text-xs text-[#5CB97C] mt-1">{lead.time}</span>
                     </p>
                   </div>
                 </div>
@@ -288,21 +288,21 @@ export function BusinessDashboard({ member }: BusinessDashboardProps) {
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-2xl w-full max-w-[380px] p-6 text-center shadow-xl">
-            <h3 className="text-[18px] font-bold text-dark">Delete Offer</h3>
-            <p className="text-[13px] text-muted mt-3">Are you sure you want to delete this offer?</p>
-            <p className="text-[13px] text-red-500 font-medium mt-1">This action cannot be undone.</p>
+            <h3 className="text-lg font-bold text-dark">Delete Offer</h3>
+            <p className="text-sm text-muted mt-3">Are you sure you want to delete this offer?</p>
+            <p className="text-sm text-red-500 font-medium mt-1">This action cannot be undone.</p>
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setDeleteTarget(null)}
                 disabled={deleting}
-                className="flex-1 h-10 rounded-xl bg-gray-100 text-dark font-semibold text-[13px] hover:bg-gray-200 transition-colors disabled:opacity-60"
+                className="flex-1 h-10 rounded-xl bg-gray-100 text-dark font-semibold text-sm hover:bg-gray-200 transition-colors disabled:opacity-60"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
                 disabled={deleting}
-                className="flex-1 h-10 rounded-xl bg-[#ED0A3F] text-white font-semibold text-[13px] hover:opacity-90 transition-opacity disabled:opacity-60"
+                className="flex-1 h-10 rounded-xl bg-[#ED0A3F] text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-60"
               >
                 {deleting ? "Deleting..." : "Delete"}
               </button>

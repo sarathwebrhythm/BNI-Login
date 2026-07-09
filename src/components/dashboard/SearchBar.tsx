@@ -76,7 +76,7 @@ export function SearchBar({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search offers..."
-          className="flex-1 min-w-0 text-[13px] text-dark placeholder:text-muted outline-none bg-transparent h-[30px]"
+          className="flex-1 min-w-0 text-sm text-dark placeholder:text-muted outline-none bg-transparent h-[30px]"
         />
       </div>
 
@@ -88,7 +88,7 @@ export function SearchBar({
             onChange={(e) =>
               onSelectCategory(e.target.value ? Number(e.target.value) : null)
             }
-            className="appearance-none flex-1 sm:flex-initial min-w-0 text-[13px] text-dark outline-none bg-transparent cursor-pointer"
+            className="appearance-none flex-1 sm:flex-initial min-w-0 text-sm text-dark outline-none bg-transparent cursor-pointer"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -114,7 +114,7 @@ export function SearchBar({
         {/* Search button */}
         <button
           type="submit"
-          className="shrink-0 bg-primary hover:bg-primary-dark text-white text-[13px] font-semibold px-5 py-2 rounded-lg transition-colors"
+          className="shrink-0 bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors"
         >
           Search
         </button>

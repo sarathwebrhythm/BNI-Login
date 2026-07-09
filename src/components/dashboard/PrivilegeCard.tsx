@@ -32,7 +32,7 @@ export function PrivilegeCard({ member }: PrivilegeCardProps) {
           <p className="card-chapter tracking-[0.3em] uppercase !text-[#e5e5e5]">{member.chapter || "TRIVANDRUM CHAPTER"}</p>
           <p className="card-designation card-gradient-text font-bold tracking-[0.12em] uppercase mt-0.5">{member.designation || "MEMBER"}</p>
     
-          <div className="card-dashed-border mt-4 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-lg">
+          <div className="card-dashed-border mt-2 sm:mt-4 inline-flex items-center gap-2.5 px-3 py-1.5 rounded-lg">
             <Image src="/images/Vector-5.png" alt="Member" width={50} height={50} className="w-4 h-4 md:w-7 md:h-7 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7 object-contain flex-shrink-0" />
             <div className="w-px h-6 flex-shrink-0" style={{ background: "rgba(246,246,246,0.4)" }} />
             <div>

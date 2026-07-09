@@ -7,6 +7,7 @@ import {
   toggleOfferSave,
 } from "@/lib/api";
 import OfferDetailModal, { OfferModalData } from "./OfferDetailModal";
+import toast from "react-hot-toast";
 import type { Member } from "@/types";
 
 interface Offer {
@@ -53,6 +54,7 @@ export function OffersGrid({
     null,
   );
   const [savedOffers, setSavedOffers] = useState<Set<number>>(new Set());
+  const [visibleCount, setVisibleCount] = useState(12);
 
   const getToken = () =>
     localStorage.getItem("member_token") ||
@@ -69,6 +71,7 @@ export function OffersGrid({
       .then((res) => {
         if (res?.success && res.offers) {
           setOffers(res.offers);
+          setVisibleCount(12);
 
           const saved = new Set<number>();
 
@@ -117,6 +120,12 @@ export function OffersGrid({
             else next.delete(offerId);
             return next;
           });
+          window.dispatchEvent(new Event("saved-offers-changed"));
+          if (res.saved) {
+            toast.success("Offer added to wishlist");
+          } else {
+            toast.error("Offer removed from wishlist");
+          }
         }
       })
       .catch(() => {});
@@ -125,7 +134,7 @@ export function OffersGrid({
   const Header = () => (
     <div className="flex items-center justify-between mb-2">
       <div>
-        <p className="!text-sm md:text-xs 2xl:text-sm !text-primary font-medium">
+        <p className="!text-sm 2xl:text-sm !text-primary font-medium">
           Brand Offers {!loading && `· ${offers.length} Offers`}
         </p>
         <h2 className="text-lg md:text-xl 2xl:text-2xl font-bold text-dark !mt-1">
@@ -186,12 +195,12 @@ export function OffersGrid({
       </div>
     );
   }
-
+  const visibleOffers = offers.slice(0, visibleCount);
   return (
     <div id="offers-section">
       <Header />
       <div className="grid grid-cols-2 min-[1025px]:grid-cols-4 gap-4 !mt-6 mb-12">
-        {offers.map((offer, i) => {
+        {visibleOffers.map((offer, i) => {
           const imageUrl = offer.image
             ? offer.image.startsWith("http")
               ? offer.image
@@ -272,6 +281,25 @@ export function OffersGrid({
           );
         })}
       </div>
+      {visibleCount < offers.length && (
+        <div className="flex justify-center mb-12 -mt-6">
+          <button
+            onClick={() => setVisibleCount(offers.length)}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-gray-200 bg-white text-sm font-semibold text-dark hover:bg-gray-50 hover:border-primary/40 transition-colors shadow-sm"
+          >
+            View More ({offers.length - visibleCount} more)
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
+              <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
 
       <OfferDetailModal
         isOpen={!!selectedOffer}
@@ -286,6 +314,7 @@ export function OffersGrid({
             else next.delete(offerId);
             return next;
           });
+          window.dispatchEvent(new Event("saved-offers-changed"));
         }}
       />
     </div>

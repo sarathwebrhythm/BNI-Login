@@ -113,7 +113,7 @@ export function LoginForm() {
     >
       {/* API error */}
       {/* {apiError && (
-        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-[13px] text-center">
+        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-sm text-center">
           {apiError}
         </div>
       )} */}
@@ -144,7 +144,7 @@ export function LoginForm() {
               w-full h-[52px] pl-11 pr-4
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
-              text-[13px] font-medium
+              text-sm font-medium
                tracking-[0.22em]
               outline-none
               focus:bg-white/14
@@ -158,7 +158,7 @@ export function LoginForm() {
           />
         </div>
         {errors.email && (
-          <p className="!text-[12px] !text-red-300 !leading-tight pl-1">
+          <p className="!text-12 !text-red-300 !leading-tight pl-1">
             {errors.email}
           </p>
         )}
@@ -190,7 +190,7 @@ export function LoginForm() {
               w-full h-[52px] pl-11 pr-12
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
-              text-[13px] font-medium tracking-[0.22em]
+              text-sm font-medium tracking-[0.22em]
               outline-none
               focus:bg-white/14
               transition-all duration-200
@@ -217,7 +217,7 @@ export function LoginForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="!text-[12px] !text-red-300 !leading-tight pl-1">
+          <p className="!text-12 !text-red-300 !leading-tight pl-1">
             {errors.password}
           </p>
         )}
@@ -263,14 +263,14 @@ export function LoginForm() {
               </svg>
             )}
           </div>
-          <span className="text-[13px] text-white/65 group-hover:text-white/85 transition-colors">
+          <span className="text-sm text-white/65 group-hover:text-white/85 transition-colors">
             Remember me
           </span>
         </label>
 
         <a
           href="/forgot-password"
-          className="text-[13px] font-semibold !text-white hover:opacity-80 transition-opacity duration-150 focus:outline-none focus-visible:underline"
+          className="text-sm font-semibold !text-white hover:opacity-80 transition-opacity duration-150 focus:outline-none focus-visible:underline"
         >
           Forget Password ?
         </a>
@@ -284,7 +284,7 @@ export function LoginForm() {
           relative w-full h-[52px]
           rounded-xl overflow-hidden
           flex items-center justify-center gap-3
-          text-white font-semibold text-[15px]
+          text-white font-semibold text-base
           border border-white/15
           transition-all duration-300
           hover:scale-[1.015]
@@ -339,7 +339,7 @@ export function LoginForm() {
       </button>
 
       {/* Enquire */}
-      <p className="!text-center !text-[13px] !text-white/65 mt-1">
+      <p className="!text-center !text-sm !text-white/65 mt-1">
         Not a BNI Trivandrum member yet?{" "}
         <a
           href="#"
