@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { uploadProfilePhoto } from "@/lib/api";
@@ -11,6 +11,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import Link from "next/link";
 
 interface SidebarProps {
   member: Member;
@@ -20,17 +21,17 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "/images/Vector-25.png" },
   {
     label: "My Privilege Card",
-    href: "/dashboard/card",
+    href: "#privilege-card",
     icon: "/images/Vector-26.png",
   },
   {
     label: "All Offers",
-    href: "/dashboard/offers",
+    href: "#offers-section",
     icon: "/images/Vector-27.png",
   },
   {
     label: "Categories",
-    href: "/dashboard/categories",
+    href: "#top-categories",
     icon: "/images/Vector-28.png",
   },
   {
@@ -41,21 +42,15 @@ const navItems = [
 ];
 
 const promoOffers = [
-  {
-    title: "10% OFF All Products",
-    image: "/images/offer1.jpg",
-  },
-  {
-    title: "Buy 1 Get 1 Free",
-    image: "/images/offer2.jpg",
-  },
-  {
-    title: "Flat 25% OFF Restaurants",
-    image: "/images/offer3.jpg",
-  },
+  { title: "10% OFF All Products", image: "/images/offer1.jpg" },
+  { title: "Buy 1 Get 1 Free", image: "/images/offer2.jpg" },
+  { title: "Flat 25% OFF Restaurants", image: "/images/offer3.jpg" },
 ];
 
 export function Sidebar({ member }: SidebarProps) {
+  // const sidebarRef = useRef<HTMLDivElement>(null);
+  const mobileSidebarRef = useRef<HTMLDivElement>(null);
+  const desktopSidebarRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +59,11 @@ export function Sidebar({ member }: SidebarProps) {
     member.profile_photo,
   );
   const [activeOffer, setActiveOffer] = useState(0);
+  const [activeNav, setActiveNav] = useState("/dashboard");
+
+  useEffect(() => {
+    setPhotoUrl(member.profile_photo);
+  }, [member.profile_photo]);
 
   const handleLogout = () => {
     localStorage.removeItem("member_token");
@@ -76,26 +76,20 @@ export function Sidebar({ member }: SidebarProps) {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const token =
       localStorage.getItem("member_token") ||
       sessionStorage.getItem("member_token") ||
       "";
-
-    console.log("Token:", token ? "exists" : "MISSING");
-    console.log("File:", file.name, file.size);
-
     try {
       const res = await uploadProfilePhoto(file, token);
-      console.log("Upload response:", res);
       if (res.success && res.photo_url) {
-        setPhotoUrl(res.photo_url);
-        // Update stored member data
+        const fullUrl = `${process.env.NEXT_PUBLIC_STORAGE_URL}${res.photo_url}`;
+        setPhotoUrl(fullUrl);
         const stored =
           localStorage.getItem("member") || sessionStorage.getItem("member");
         if (stored) {
           const memberData = JSON.parse(stored);
-          memberData.profile_photo = res.photo_url;
+          memberData.profile_photo = fullUrl;
           if (localStorage.getItem("member_token")) {
             localStorage.setItem("member", JSON.stringify(memberData));
           } else {
@@ -108,10 +102,11 @@ export function Sidebar({ member }: SidebarProps) {
     }
   };
 
-  const SidebarContent = () => (
+  const SidebarContent = (
+    scrollContainerRef: React.RefObject<HTMLDivElement | null>,
+  ) => (
     <div className="flex flex-col">
-      {/* Logo */}
-      <div className="px-[100px] pt-8 pb-6">
+      <div className="px-[40px] 2xl:px-[100px] pt-8 pb-6">
         <Image
           src="/images/Layer-1.png"
           alt="BNI Trivandrum"
@@ -120,26 +115,40 @@ export function Sidebar({ member }: SidebarProps) {
           className="object-contain"
         />
       </div>
-
-      {/* Nav items */}
       <nav className="flex-1 px-3">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = activeNav === item.href;
           return (
             <button
               key={item.href}
               onClick={() => {
-                router.push(item.href);
+                setActiveNav(item.href);
                 setIsOpen(false);
+
+                if (item.href.startsWith("#")) {
+                  const id = item.href.slice(1);
+
+                  if (pathname === "/dashboard") {
+                    // Tell TabSwitch to switch back to the User tab
+                    window.dispatchEvent(new CustomEvent("switch-user-tab"));
+
+                    // Give React time to render the User tab
+                    setTimeout(() => {
+                      document.getElementById(id)?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }, 150);
+                  } else {
+                    router.push(`/dashboard${item.href}`);
+                  }
+                } else {
+                  router.push(item.href);
+                }
               }}
               className={`
-                w-full flex !text-white items-center gap-3 px-[70px] py-3 rounded-xl mb-1
-                text-[14px] font-medium transition-all duration-200 text-left
-                ${
-                  isActive
-                    ? "text-white border border-white/20"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                }
+                w-full flex !text-white items-center gap-3 px-[20px] 2xl:px-[80px] py-3 rounded-xl mb-1
+                text-14 2xl:text-lg font-medium transition-all duration-200 text-left
+                ${isActive ? "text-white border border-white/20" : "text-white/70 hover:bg-white/10 hover:text-white"}
               `}
               style={
                 isActive
@@ -163,17 +172,17 @@ export function Sidebar({ member }: SidebarProps) {
           );
         })}
       </nav>
-
-      {/* Featured promo card */}
-      <div className=" text-center mx-4 mb-4 mt-8 rounded-2xl overflow-hidden bg-white/10 border border-white/15 p-4">
-        <p className="!text-[10px] !text-accent-yellow mb-1">
+      <div className="text-center mx-4 mb-4 mt-8 rounded-2xl overflow-hidden bg-white/10 border border-white/15 p-4">
+        <p className="!text-accent-yellow mb-1 !text-sm 2xl:!text-14">
           Featured ·{" "}
-          <span className="!text-[10px] !text-white">Trending Now</span>
+          <span className="!text-white text-sm 2xl:!text-14">
+            Trending Now
+          </span>
         </p>
-        <h3 className="text-white font-bold text-[16px] leading-tight mb-1">
+        <h3 className="text-white font-bold text-xl leading-tight mb-1">
           Top Privileges This Month
         </h3>
-        <p className="!text-white !text-[12px] !mb-4">
+        <p className="!text-white !text-sm 2xl:!text-14 !mb-4">
           {promoOffers[activeOffer].title}
         </p>
         <div className="mb-3 overflow-hidden rounded-xl">
@@ -184,17 +193,12 @@ export function Sidebar({ member }: SidebarProps) {
             loop={true}
             allowTouchMove={true}
             grabCursor={true}
-            pagination={{
-              clickable: true,
-            }}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
           >
             {promoOffers.map((offer, index) => (
               <SwiperSlide key={index}>
-                <div className="relative h-[200px] rounded-xl overflow-hidden">
+                <div className="relative h-[120px] rounded-xl overflow-hidden">
                   <img
                     src={offer.image}
                     alt={offer.title}
@@ -205,19 +209,34 @@ export function Sidebar({ member }: SidebarProps) {
             ))}
           </Swiper>
         </div>
-
- <button className="gradient-border-btn w-full h-12 rounded-[10px] bg-transparent text-accent-yellow font-semibold flex items-center justify-center gap-3 transition-all duration-300 group">
-  <span>Explore now</span>
-  <span className="transition-transform duration-300 group-hover:translate-x-1">
-    →
-  </span>
-</button>
+        <button className="gradient-border-btn w-full h-12 rounded-[10px] bg-transparent text-accent-yellow font-semibold flex items-center justify-center gap-3 transition-all duration-300 group">
+          <span>Explore now</span>
+          <span className="transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </button>
       </div>
-
-      {/* User profile */}
       <div className="mx-3 mb-4">
         <button
-          onClick={() => setProfileOpen((p) => !p)}
+          onClick={() => {
+            const opening = !profileOpen;
+            setProfileOpen(opening);
+
+            if (opening) {
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  const container = scrollContainerRef.current;
+
+                  if (!container) return;
+
+                  container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }, 100);
+              });
+            }
+          }}
           className="w-full flex items-center gap-4 px-2 py-2 rounded-2xl border border-white/15 transition-all duration-300 hover:brightness-125 hover:scale-[1.02] active:scale-[0.98]"
           style={{
             background:
@@ -225,15 +244,17 @@ export function Sidebar({ member }: SidebarProps) {
             boxShadow: "0 1px 37px 0 rgba(251,12,12,0.4)",
           }}
         >
-          {/* Profile photo with pencil icon */}
           <div
             className="relative flex-shrink-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
+            <div
+              className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-2xl overflow-hidden cursor-pointer"
+              onClick={() => router.push("/dashboard/profile")}
+            >
               {photoUrl ? (
                 <img
-                  src={`http://127.0.0.1:8000${photoUrl}`}
+                  src={photoUrl}
                   alt={member.name}
                   className="w-full h-full object-cover"
                 />
@@ -241,11 +262,13 @@ export function Sidebar({ member }: SidebarProps) {
                 member.name?.charAt(0).toUpperCase()
               )}
             </div>
-            {/* Pencil edit icon */}
             <label
-              htmlFor="avatar-upload"
               className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent-yellow rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-              title="Upload photo"
+              title="Edit profile"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/dashboard/profile");
+              }}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
                 <path
@@ -270,18 +293,14 @@ export function Sidebar({ member }: SidebarProps) {
               onChange={handlePhotoUpload}
             />
           </div>
-
-          {/* User Details */}
           <div className="flex-1 text-left">
-            <p className="!text-white font-semibold text-[18px] leading-tight">
+            <p className="!text-white font-semibold text-sm leading-tight">
               {member.name}
             </p>
-            <p className="!text-accent-yellow text-[16px] mt-1">
+            <p className="!text-accent-yellow text-sm mt-1">
               {member.designation || "Member"}
             </p>
           </div>
-
-          {/* Arrow */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -296,13 +315,11 @@ export function Sidebar({ member }: SidebarProps) {
             />
           </svg>
         </button>
-
-        {/* Profile dropdown */}
         {profileOpen && (
           <div className="mt-1 bg-white/10 border border-white/15 rounded-xl overflow-hidden">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white text-[13px] transition-colors"
+              className="w-full flex   items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white text-sm transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
                 <path
@@ -323,10 +340,9 @@ export function Sidebar({ member }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile toggle button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg"
+        className="lg:hidden fixed top-1 left-4 z-50 w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg"
         aria-label="Open menu"
       >
         <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
@@ -338,16 +354,12 @@ export function Sidebar({ member }: SidebarProps) {
           />
         </svg>
       </button>
-
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsOpen(false)}
         />
       )}
-
-      {/* Mobile drawer */}
       <div
         className={`lg:hidden fixed top-0 left-0 h-full w-[320px] z-50 transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -355,13 +367,13 @@ export function Sidebar({ member }: SidebarProps) {
           <img
             src="/images/background.jpg"
             alt=""
-            className="w-full h-full object-cover  object-[center_70%]"
+            className="w-full h-full object-cover object-[center_70%]"
             aria-hidden="true"
           />
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-white/70 hover:text-white z-10"
+          className="absolute top-4 right-4 z-[9999] w-8 h-8 flex items-center justify-center text-white/70 hover:text-white"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
             <path
@@ -372,13 +384,15 @@ export function Sidebar({ member }: SidebarProps) {
             />
           </svg>
         </button>
-        <div className="relative z-10 h-full">
-          <SidebarContent />
+        {/* <div className="relative z-10 h-full"> */}
+        <div
+          ref={mobileSidebarRef}
+          className="relative z-10 flex flex-col h-full overflow-y-auto overscroll-contain"
+        >
+          {SidebarContent(mobileSidebarRef)}
         </div>
       </div>
-
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:flex flex-col w-[320px] xl:w-[320px] 2xl:w-[450px] flex-shrink-0 relative">
+      <aside className="hidden lg:flex flex-col w-[320px] xl:w-[280px] 2xl:w-[400px] flex-shrink-0 relative h-screen sticky top-0">
         <img
           src="/images/background.jpg"
           alt=""
@@ -386,8 +400,12 @@ export function Sidebar({ member }: SidebarProps) {
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0)_0%,rgba(0,0,0,.4)_50%,rgba(0,0,0,0.05)_75%,rgba(0,0,0,0.1)_100%)]"></div>
-        <div className="relative z-10 flex flex-col h-full">
-          <SidebarContent />
+        {/* <div className="relative z-10 flex flex-col h-full"> */}
+        <div
+          ref={desktopSidebarRef}
+          className="relative z-10 flex flex-col h-full overflow-y-auto overscroll-contain pb-24"
+        >
+          {SidebarContent(desktopSidebarRef)}
         </div>
       </aside>
     </>

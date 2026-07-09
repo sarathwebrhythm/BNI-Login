@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { loginMember } from "@/lib/api";
 
 interface FormData {
@@ -27,19 +28,19 @@ export function LoginForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string>("");
+  // const [apiError, setApiError] = useState<string>("");
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = "*Email is required";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
     }
 
     if (!formData.password) {
-      newErrors.password = "*Password is required";
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
@@ -50,32 +51,47 @@ export function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setApiError("");
+    // setApiError("");
 
     if (!validate()) return;
 
     setIsLoading(true);
 
     try {
-      const res = await loginMember(formData.email, formData.password);
+      const res = await loginMember(
+        formData.email,
+        formData.password,
+        "inhouse",
+      );
 
-      if (res.success && res.token) {
-        // Store token
-        if (formData.rememberMe) {
-          localStorage.setItem("member_token", res.token);
-          localStorage.setItem("member", JSON.stringify(res.member));
-        } else {
-          sessionStorage.setItem("member_token", res.token);
-          sessionStorage.setItem("member", JSON.stringify(res.member));
-        }
+      if (res.success && res.token && res.member) {
+        const base = process.env.NEXT_PUBLIC_STORAGE_URL || "";
+        const toUrl = (path?: string) =>
+          path
+            ? path.startsWith("http")
+              ? path
+              : `${base}${path}`
+            : undefined;
+
+        // Convert raw paths to full URLs before saving
+        const member = {
+          ...res.member,
+          profile_photo: toUrl(res.member.profile_photo),
+          cover_photo: toUrl(res.member.cover_photo),
+          business_logo: toUrl(res.member.business_logo),
+        };
+
+        localStorage.setItem("member_token", res.token);
+        localStorage.setItem("member", JSON.stringify(member));
+        toast.success("Successfully logged in!");
 
         // Redirect to dashboard
         router.push("/dashboard");
       } else {
-        setApiError(res.message || "Login failed. Please try again.");
+        toast.error(res.message || "Login failed. Please try again.");
       }
     } catch {
-      setApiError("Network error. Please check your connection and try again.");
+      toast.error("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +102,7 @@ export function LoginForm() {
     if (field in errors) {
       setErrors((p) => ({ ...p, [field]: undefined }));
     }
-    setApiError("");
+    // setApiError("");
   };
 
   return (
@@ -96,11 +112,11 @@ export function LoginForm() {
       className="flex flex-col gap-5 w-full"
     >
       {/* API error */}
-      {apiError && (
-        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-[13px] text-center">
+      {/* {apiError && (
+        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-sm text-center">
           {apiError}
         </div>
-      )}
+      )} */}
 
       {/* Email */}
       <div className="flex flex-col gap-2">
@@ -128,18 +144,21 @@ export function LoginForm() {
               w-full h-[52px] pl-11 pr-4
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
-              text-[13px] font-medium
+              text-sm font-medium
+               tracking-[0.22em]
               outline-none
               focus:bg-white/14
               transition-all duration-200
-              ${errors.email
-                ? "border-red-400/70 focus:border-red-400"
-                : "border-white/22 focus:border-white/55"}
+              ${
+                errors.email
+                  ? "border-red-400/70 focus:border-red-400"
+                  : "border-white/22 focus:border-white/55"
+              }
             `}
           />
         </div>
         {errors.email && (
-          <p className="!text-[12px] !text-red-300 !leading-tight pl-1">
+          <p className="!text-12 !text-red-300 !leading-tight pl-1">
             {errors.email}
           </p>
         )}
@@ -171,13 +190,15 @@ export function LoginForm() {
               w-full h-[52px] pl-11 pr-12
               bg-white/10 border rounded-xl
               text-white placeholder:text-white/35
-              text-[13px]
+              text-sm font-medium tracking-[0.22em]
               outline-none
               focus:bg-white/14
               transition-all duration-200
-              ${errors.password
-                ? "border-red-400/70 focus:border-red-400"
-                : "border-white/22 focus:border-white/55"}
+              ${
+                errors.password
+                  ? "border-red-400/70 focus:border-red-400"
+                  : "border-white/22 focus:border-white/55"
+              }
             `}
           />
           <button
@@ -187,7 +208,7 @@ export function LoginForm() {
             className="absolute right-4 opacity-50 hover:opacity-80 transition-opacity duration-150 focus:outline-none rounded p-1"
           >
             <Image
-              src="/images/Vector-8.png"
+              src={showPassword ? "/images/eye-off.png" : "/images/eye.png"}
               alt={showPassword ? "Hide password" : "Show password"}
               width={18}
               height={18}
@@ -196,7 +217,7 @@ export function LoginForm() {
           </button>
         </div>
         {errors.password && (
-          <p className="!text-[12px] !text-red-300 !leading-tight pl-1">
+          <p className="!text-12 !text-red-300 !leading-tight pl-1">
             {errors.password}
           </p>
         )}
@@ -219,9 +240,11 @@ export function LoginForm() {
             <div
               className={`
                 w-4 h-4 rounded-[3px] border transition-all duration-150
-                ${formData.rememberMe
-                  ? "bg-primary border-primary"
-                  : "bg-white/10 border-white/40"}
+                ${
+                  formData.rememberMe
+                    ? "bg-primary border-primary"
+                    : "bg-white/10 border-white/40"
+                }
               `}
             />
             {formData.rememberMe && (
@@ -240,14 +263,14 @@ export function LoginForm() {
               </svg>
             )}
           </div>
-          <span className="text-[13px] text-white/65 group-hover:text-white/85 transition-colors">
+          <span className="text-sm text-white/65 group-hover:text-white/85 transition-colors">
             Remember me
           </span>
         </label>
 
         <a
           href="/forgot-password"
-          className="text-[13px] font-semibold !text-white hover:opacity-80 transition-opacity duration-150 focus:outline-none focus-visible:underline"
+          className="text-sm font-semibold !text-white hover:opacity-80 transition-opacity duration-150 focus:outline-none focus-visible:underline"
         >
           Forget Password ?
         </a>
@@ -261,7 +284,7 @@ export function LoginForm() {
           relative w-full h-[52px]
           rounded-xl overflow-hidden
           flex items-center justify-center gap-3
-          text-white font-semibold text-[15px]
+          text-white font-semibold text-base
           border border-white/15
           transition-all duration-300
           hover:scale-[1.015]
@@ -272,36 +295,32 @@ export function LoginForm() {
           group
         "
         style={{
-          background:
-            "linear-gradient(180deg, #E31E3B 0%, #C31526 55%, #A50F20 100%)",
+          background: "linear-gradient(180deg, #C31526 0%, #A50F20 100%)",
           boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.25)",
+            "0 0 8px rgba(195,21,38,0.35), 0 0 20px rgba(195,21,38,0.45), 0 0 35px rgba(195,21,38,0.2)",
         }}
       >
-        {/* Inner bulb glow */}
-        <div
-          className="absolute inset-0 opacity-70 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 40%, transparent 75%)",
-          }}
-          aria-hidden="true"
-        />
-        {/* Top shine highlight */}
-        <div
-          className="absolute top-0 left-4 right-4 h-px opacity-60 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
-          }}
-          aria-hidden="true"
-        />
-
         {isLoading ? (
           <span className="relative z-10 flex items-center gap-2">
-            <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" opacity="0.3" />
-              <path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
+            <svg
+              className="animate-spin w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="white"
+                strokeWidth="3"
+                opacity="0.3"
+              />
+              <path
+                d="M12 2a10 10 0 0110 10"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
             </svg>
             Signing in...
           </span>
@@ -320,7 +339,7 @@ export function LoginForm() {
       </button>
 
       {/* Enquire */}
-      <p className="!text-center !text-[13px] !text-white/65 mt-1">
+      <p className="!text-center !text-sm !text-white/65 mt-1">
         Not a BNI Trivandrum member yet?{" "}
         <a
           href="#"

@@ -1,67 +1,80 @@
-import React from "react";
+"use client";
 
-const stats = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-primary">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-      </svg>
-    ),
-    label: "Total Savings",
-    value: "₹ 28,450",
+import React, { useEffect, useState } from "react";
 
-    positive: true,
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-primary">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 9h18M9 21V9" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
-    label: "Offers Redeemed",
-    value: "12",
-
-    positive: true,
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-primary">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M9 3v18M3 9h6M3 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-    label: "Partner Brands",
-    value: "180+",
-   
-    positive: true,
-  },
-];
+interface Stats {
+  active_offers: number;
+  redeemed_count: number;
+  total_partners: number;
+}
 
 export function StatsCards() {
+  const [stats, setStats] = useState<Stats>({
+    active_offers: 0,
+    redeemed_count: 0,
+    total_partners: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  const fetchStats = () => {
+    const token = localStorage.getItem("member_token") || sessionStorage.getItem("member_token") || "";
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/member/member-stats`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setStats({
+            active_offers: data.active_offers,
+            redeemed_count: data.redeemed_count,
+            total_partners: data.total_partners,
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchStats();
+    window.addEventListener("stats-updated", fetchStats);
+    return () => window.removeEventListener("stats-updated", fetchStats);
+  }, []);
+
+  const cards = [
+    {
+      icon: "/images/vector-40.png",
+      label: "Total Active Offers",
+      value: loading ? "..." : stats.active_offers.toString(),
+    },
+    {
+      icon: "/images/vector-41.png",
+      label: "Offers Redeemed",
+      value: loading ? "..." : stats.redeemed_count.toString(),
+    },
+    {
+      icon: "/images/vector-42.png",
+      label: "Total Partners",
+      value: loading ? "..." : `${stats.total_partners}+`,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-3">
-      {stats.map((stat, i) => (
+      {cards.map((stat, i) => (
         <div
           key={i}
-          className="flex items-center gap-4 bg-white rounded-xl p-4 border border-gray-100 shadow-sm"
+          className="group flex items-center gap-4 bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300"
         >
           {/* Icon */}
-          <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center flex-shrink-0">
-            {stat.icon}
+          <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors duration-300">
+            <img src={stat.icon} alt={stat.label} className="w-6 h-6 object-contain group-hover:brightness-0 group-hover:invert transition-all duration-300" />
           </div>
           {/* Text */}
           <div className="flex-1">
-            <p className="text-[12px] text-muted">{stat.label}</p>
-            <p className="text-[20px] font-bold text-primary leading-tight">{stat.value}</p>
-            <p className="text-[11px] text-muted">{stat.sub}</p>
+            <p className="text-12 text-muted">{stat.label}</p>
+            <p className="text-xl font-bold text-primary leading-tight">{stat.value}</p>
           </div>
-          {/* Change */}
-          {stat.change && (
-            <p className="text-[11px] text-green-500 font-medium whitespace-nowrap">
-              {stat.change}
-            </p>
-          )}
         </div>
       ))}
     </div>
