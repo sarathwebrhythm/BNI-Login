@@ -228,12 +228,12 @@ export default function ProfilePage() {
         <TopBar />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 2xl:p-12">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-[20px] md:text-[24px] 2xl:text-[32px] font-bold text-dark">
+            <h1 className="text-xl md:text-2xl 2xl:text-32 font-bold text-dark">
               My Profile
             </h1>
             <button
               onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-[13px] md:text-[14px] font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm md:text-14 font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
               style={{
                 background:
                   "linear-gradient(90deg, rgba(193,20,43,1) 0%, rgba(110,9,20,1) 100%)",
@@ -256,13 +256,13 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 min-[1025px]:grid-cols-2 gap-6">
             {/* Business Section — LEFT */}
             <div className="bg-white rounded-2xl p-5 md:p-6 2xl:p-8 shadow-sm">
-              <h2 className="text-[16px] md:text-[18px] 2xl:text-[24px] font-bold text-dark mb-5">
+              <h2 className="text-base md:text-lg 2xl:text-2xl font-bold text-dark mb-5">
                 Business Info
               </h2>
 
               {/* Profile Photo */}
               <div className="mb-5">
-                <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-2">
+                <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-2">
                   Profile Photo
                 </label>
                 <div className="flex items-center gap-4">
@@ -282,7 +282,7 @@ export default function ProfilePage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-[28px] md:text-[32px] font-bold text-gray-400">
+                        <span className="text-28 md:text-32 font-bold text-gray-400">
                           {member.name?.charAt(0).toUpperCase()}
                         </span>
                       )}
@@ -318,19 +318,17 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <p className="text-[13px] md:text-[14px] 2xl:text-[16px] font-medium text-dark">
+                    <p className="text-sm md:text-14 2xl:text-base font-medium text-dark">
                       {member.name}
                     </p>
-                    <p className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted mt-0.5">
-                      Click pencil to change photo
-                    </p>
+              
                   </div>
                 </div>
               </div>
 
               {/* Cover Photo */}
               <div className="mb-5">
-                <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-2">
+                <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-2">
                   Cover Photo
                 </label>
                 <div className="relative w-full h-32 md:h-40 2xl:h-48 rounded-xl overflow-hidden">
@@ -380,7 +378,7 @@ export default function ProfilePage() {
 
               {/* Company Logo */}
               <div className="mb-5">
-                <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-2">
+                <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-2">
                   Company Logo
                 </label>
                 <div className="flex items-center gap-4">
@@ -428,10 +426,10 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <p className="text-[13px] md:text-[14px] 2xl:text-[16px] font-medium text-dark">
+                    <p className="text-sm md:text-14 2xl:text-base font-medium text-dark">
                       Company Logo
                     </p>
-                    <p className="text-[11px] md:text-[12px] 2xl:text-[14px] text-muted mt-0.5">
+                    <p className="text-xs md:text-12 2xl:text-14 text-muted mt-0.5">
                       PNG, JPG up to 1MB
                     </p>
                   </div>
@@ -441,7 +439,7 @@ export default function ProfilePage() {
 
             {/* Profile Section — RIGHT */}
             <div className="bg-white rounded-2xl p-5 md:p-6 2xl:p-8 shadow-sm">
-              <h2 className="text-[16px] md:text-[18px] 2xl:text-[24px] font-bold text-dark mb-5">
+              <h2 className="text-base md:text-lg 2xl:text-2xl font-bold text-dark mb-5">
                 Profile Info
               </h2>
               <div className="space-y-4">
@@ -454,15 +452,15 @@ export default function ProfilePage() {
                   { label: "BNI ID", value: member.bni_id },
                 ].map((field) => (
                   <div key={field.label}>
-                    <label className="block text-[11px] md:text-[12px] 2xl:text-[14px] font-semibold text-muted uppercase tracking-wide mb-1">
+                    <label className="block text-xs md:text-12 2xl:text-14 font-semibold text-muted uppercase tracking-wide mb-1">
                       {field.label}
                     </label>
-                    <div className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-[13px] md:text-[14px] 2xl:text-[16px] text-dark">
+                    <div className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm md:text-14 2xl:text-base text-dark">
                       {field.value}
                     </div>
                   </div>
                 ))}
-                <p className="text-[11px] md:text-[12px] 2xl:text-[13px] text-muted flex items-center gap-1 mt-2">
+                <p className="text-xs md:text-12 2xl:text-sm text-muted flex items-center gap-1 mt-2">
                   <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5">
                     <circle
                       cx="12"

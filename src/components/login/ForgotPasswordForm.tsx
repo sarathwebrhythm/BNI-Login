@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
       if (res.success) {
         setStep("otp");
       } else {
-        setApiError(res.message);
+        setApiError(res.message??"An error occurred. Please try again.");
       }
     } catch {
       setApiError("Network error. Please try again.");
@@ -102,7 +102,7 @@ export function ForgotPasswordForm() {
       if (res.success) {
         setStep("reset");
       } else {
-        setApiError(res.message);
+        setApiError(res.message??"An error occurred. Please try again.");
       }
     } catch {
       setApiError("Network error. Please try again.");
@@ -123,7 +123,7 @@ export function ForgotPasswordForm() {
         setTimeout(() => setApiSuccess(""), 3000);
         startTimer();
       } else {
-        setApiError(res.message);
+        setApiError(res.message??"An error occurred. Please try again.");
       }
     } catch {
       setApiError("Network error. Please try again.");
@@ -158,7 +158,7 @@ export function ForgotPasswordForm() {
         setApiSuccess("Password reset successfully! Redirecting to login...");
         setTimeout(() => router.push("/"), 2000);
       } else {
-        setApiError(res.message);
+        setApiError(res.message??"An error occurred. Please try again.");
       }
     } catch {
       setApiError("Network error. Please try again.");
@@ -198,14 +198,14 @@ export function ForgotPasswordForm() {
 
       {/* API error */}
       {apiError && (
-        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-[13px] text-center">
+        <div className="w-full px-4 py-3 rounded-xl bg-red-500/20 border border-red-400/50 text-white text-sm text-center">
           {apiError}
         </div>
       )}
 
       {/* API success */}
       {apiSuccess && (
-        <div className="w-full px-4 py-3 rounded-xl bg-green-500/20 border border-green-400/50 text-white text-[13px] text-center">
+        <div className="w-full px-4 py-3 rounded-xl bg-green-500/20 border border-green-400/50 text-white text-sm text-center">
           {apiSuccess}
         </div>
       )}
@@ -232,7 +232,7 @@ export function ForgotPasswordForm() {
                   w-full h-[52px] pl-11 pr-4
                   bg-white/10 border rounded-xl
                   text-white placeholder:text-white/35
-                  text-[13px] font-medium
+                  text-sm font-medium
                   outline-none focus:bg-white/14
                   transition-all duration-200
                   ${emailError ? "border-red-400/70 focus:border-red-400" : "border-white/22 focus:border-white/55"}
@@ -240,13 +240,13 @@ export function ForgotPasswordForm() {
               />
             </div>
             {emailError && (
-              <p className="!text-[12px] !text-red-300 !leading-tight pl-1">{emailError}</p>
+              <p className="!text-12 !text-red-300 !leading-tight pl-1">{emailError}</p>
             )}
           </div>
 
           <SubmitButton isLoading={isLoading} label="Send OTP" />
 
-          <p className="!text-center !text-[13px] !text-white/65 mt-1">
+          <p className="!text-center !text-sm !text-white/65 mt-1">
             Remember your password?{" "}
             <a href="/" className="!text-accent font-semibold hover:text-accent-light transition-colors">
               Sign in
@@ -258,7 +258,7 @@ export function ForgotPasswordForm() {
       {/* ===== STEP 2 — OTP ===== */}
       {step === "otp" && (
         <form onSubmit={handleOtpSubmit} noValidate className="flex flex-col gap-5">
-          <p className="!text-[13px] !text-white/70 text-center">
+          <p className="!text-sm !text-white/70 text-center">
             OTP sent to <span className="text-white font-semibold">{email}</span>
           </p>
 
@@ -288,7 +288,7 @@ export function ForgotPasswordForm() {
           {/* Timer / Resend */}
           <div className="flex justify-center">
             {!canResend ? (
-              <p className="!text-[13px] !text-white/60">
+              <p className="!text-sm !text-white/60">
                 Resend OTP in{" "}
                 <span className="text-accent font-semibold">
                   00:{timer.toString().padStart(2, "0")}
@@ -299,7 +299,7 @@ export function ForgotPasswordForm() {
                 type="button"
                 onClick={handleResend}
                 disabled={isLoading}
-                className="text-[13px] font-semibold text-accent hover:text-accent-light transition-colors disabled:opacity-50"
+                className="text-sm font-semibold text-accent hover:text-accent-light transition-colors disabled:opacity-50"
               >
                 Resend OTP
               </button>
@@ -311,7 +311,7 @@ export function ForgotPasswordForm() {
           <button
             type="button"
             onClick={() => { setStep("email"); setApiError(""); setOtp(["","","","","",""]); }}
-            className="!text-[13px] !text-white/60 hover:!text-white/80 text-center transition-colors"
+            className="!text-sm !text-white/60 hover:!text-white/80 text-center transition-colors"
           >
             ← Change email
           </button>
@@ -340,7 +340,7 @@ export function ForgotPasswordForm() {
                   w-full h-[52px] pl-11 pr-12
                   bg-white/10 border rounded-xl
                   text-white placeholder:text-white/35
-                  text-[13px] font-medium
+                  text-sm font-medium
                   outline-none focus:bg-white/14
                   transition-all duration-200
                   ${passwordError ? "border-red-400/70" : "border-white/22 focus:border-white/55"}
@@ -372,7 +372,7 @@ export function ForgotPasswordForm() {
                   w-full h-[52px] pl-11 pr-12
                   bg-white/10 border rounded-xl
                   text-white placeholder:text-white/35
-                  text-[13px] font-medium
+                  text-sm font-medium
                   outline-none focus:bg-white/14
                   transition-all duration-200
                   ${passwordError ? "border-red-400/70" : "border-white/22 focus:border-white/55"}
@@ -384,7 +384,7 @@ export function ForgotPasswordForm() {
               </button>
             </div>
             {passwordError && (
-              <p className="!text-[12px] !text-red-300 !leading-tight pl-1">{passwordError}</p>
+              <p className="!text-12 !text-red-300 !leading-tight pl-1">{passwordError}</p>
             )}
           </div>
 
@@ -405,7 +405,7 @@ function SubmitButton({ isLoading, label }: { isLoading: boolean; label: string 
         relative w-full h-[52px]
         rounded-xl overflow-hidden
         flex items-center justify-center gap-3
-        text-white font-semibold text-[15px]
+        text-white font-semibold text-base
         border border-white/15
         transition-all duration-300
         hover:scale-[1.015] hover:border-white/25

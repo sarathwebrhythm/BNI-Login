@@ -39,7 +39,7 @@ export function TabSwitch({ userContent, member }: TabSwitchProps) {
               <button
                 key={tab.label}
                 onClick={() => setActive(tab.label)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-200 cursor-pointer select-none
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-14 font-medium transition-all duration-200 cursor-pointer select-none
                   ${isActive
                     ? "bg-primary text-white shadow-md scale-[1.03]"
                     : "text-muted hover:bg-gray-50 hover:text-dark hover:scale-[1.02]"

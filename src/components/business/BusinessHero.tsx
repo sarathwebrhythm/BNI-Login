@@ -179,10 +179,10 @@ export function BusinessHero({ member }: BusinessHeroProps) {
 
             {/* Business Info */}
             <div className="min-w-0 flex-shrink-0 w-[140px] md:w-[180px] 2xl:w-[240px]">
-              <h2 className="text-white font-bold text-[16px] md:text-[22px] 2xl:text-[30px] leading-tight truncate">
+              <h2 className="text-white font-bold text-base md:text-22 2xl:text-3xl leading-tight truncate">
                 {member.name || "Your Business"}
               </h2>
-              <p className="!text-white text-[11px] md:text-[13px] 2xl:text-[15px] mt-0.5 truncate">
+              <p className="!text-white text-xs md:text-sm 2xl:text-base mt-0.5 truncate">
                 {member.address || "Trivandrum, Kerala"}
               </p>
             </div>
@@ -199,10 +199,10 @@ export function BusinessHero({ member }: BusinessHeroProps) {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                 {stats.map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <p className="!text-white font-bold text-[14px] md:text-[18px] 2xl:text-[24px]">
+                    <p className="!text-white font-bold text-14 md:text-lg 2xl:text-2xl">
                       {stat.value}
                     </p>
-                    <p className="!text-white !text-[12px] md:!text-[13px] 2xl:!text-[16px] mt-1">
+                    <p className="!text-white !text-12 md:!text-sm 2xl:!text-base mt-1">
                       {stat.label}
                     </p>
                   </div>
@@ -213,7 +213,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => router.push("/dashboard/profile")}
-                  className="flex items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-md text-[12px] md:text-[15px] font-semibold whitespace-nowrap cursor-pointer border border-[#F8C600] text-[#F8C600] bg-transparent transition-colors duration-200 hover:bg-[#F8C600] hover:text-[#f4f4f4]"
+                  className="flex items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-md text-12 md:text-base font-semibold whitespace-nowrap cursor-pointer border border-[#F8C600] text-[#F8C600] bg-transparent transition-colors duration-200 hover:bg-[#F8C600] hover:text-[#f4f4f4]"
                 >
                   View My Profile
                   <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
@@ -229,7 +229,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
                 <button
                   onClick={handleCreateOffer}
                   disabled={checking}
-                  className="flex text-white items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-md text-[12px] md:text-[15px] font-semibold whitespace-nowrap cursor-pointer disabled:cursor-not-allowed bg-[#C31526] transition-colors duration-200 hover:bg-[#a8101f] disabled:opacity-70"
+                  className="flex text-white items-center justify-center h-9 gap-2 px-6 py-2 md:px-7 md:py-2 rounded-md text-12 md:text-base font-semibold whitespace-nowrap cursor-pointer disabled:cursor-not-allowed bg-[#C31526] transition-colors duration-200 hover:bg-[#a8101f] disabled:opacity-70"
                 >
                   {checking ? "Please Waite......" : "Create new offer"}
                   <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
@@ -265,10 +265,10 @@ export function BusinessHero({ member }: BusinessHeroProps) {
             />
           </div>
           <div className="min-w-0">
-            <h2 className="text-white font-bold text-[18px] md:text-[22px] leading-tight truncate">
+            <h2 className="text-white font-bold text-lg md:text-22 leading-tight truncate">
               {member.name || "Your Business"}
             </h2>
-            <p className="!text-white/70 text-[13px] md:text-[14px] mt-0.5 truncate">
+            <p className="!text-white/70 text-sm md:text-14 mt-0.5 truncate">
               {member.address || "Trivandrum, Kerala"}
             </p>
           </div>
@@ -285,10 +285,10 @@ export function BusinessHero({ member }: BusinessHeroProps) {
                 {stat.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="!text-white font-bold text-[18px] leading-tight">
+                <p className="!text-white font-bold text-lg leading-tight">
                   {stat.value}
                 </p>
-                <p className="!text-white/70 text-[12px] mt-0.5">
+                <p className="!text-white/70 text-12 mt-0.5">
                   {stat.label}
                 </p>
               </div>
@@ -300,7 +300,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push("/dashboard/profile")}
-            className="w-full flex items-center justify-center h-11 gap-2 rounded-xl text-[14px] font-semibold cursor-pointer border border-[#F8C600] text-[#F8C600] bg-transparent transition-colors duration-200 hover:bg-[#F8C600] hover:text-[#f4f4f4]"
+            className="w-full flex items-center justify-center h-11 gap-2 rounded-xl text-14 font-semibold cursor-pointer border border-[#F8C600] text-[#F8C600] bg-transparent transition-colors duration-200 hover:bg-[#F8C600] hover:text-[#f4f4f4]"
           >
             View My Profile
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
@@ -316,7 +316,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
           <button
             onClick={handleCreateOffer}
             disabled={checking}
-            className="w-full flex text-white items-center justify-center h-11 gap-2 rounded-xl text-[14px] font-semibold cursor-pointer disabled:cursor-not-allowed bg-[#C31526] transition-colors duration-200 hover:bg-[#a8101f] disabled:opacity-70"
+            className="w-full flex text-white items-center justify-center h-11 gap-2 rounded-xl text-14 font-semibold cursor-pointer disabled:cursor-not-allowed bg-[#C31526] transition-colors duration-200 hover:bg-[#a8101f] disabled:opacity-70"
           >
             {checking ? "Please Waite......" : "Create new offer"}
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">

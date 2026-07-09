@@ -25,12 +25,17 @@
 
 --text-2xs: 0.625rem;
 --text-xs: 0.6875rem;
+--text-12: 0.75rem;
 --text-sm: 0.8125rem;
+--text-14: 0.875rem;
 --text-base: 1rem;
 --text-lg: 1.125rem;
 --text-xl: 1.25rem;
+--text-22: 1.375rem;
 --text-2xl: 1.5rem;
+--text-28: 1.75rem;
 --text-3xl: 1.875rem;
+--text-32: 2rem;
 --text-4xl: 2.25rem;
 --text-5xl: 2.875rem;
 
@@ -78,11 +83,13 @@ h1, h2, h3, h4, h5, h6 {
   line-height: var(--line-height-tight);
 }
 
-p {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--color-muted);
-  line-height: var(--line-height-relaxed);
+@layer base {
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-muted);
+    line-height: var(--line-height-relaxed);
+  }
 }
 
 a { color: inherit; text-decoration: none; }
@@ -186,7 +193,7 @@ button, input, select, textarea { font-family: inherit; }
 /* ============================================================
    PRIVILEGE CARD — Responsive Font Sizes
    ============================================================ */
-.card-name        { font-size: clamp(11px, 1.8vw, 18px); }
+/* .card-name        { font-size: clamp(11px, 1.8vw, 18px); }
 .card-chapter     { font-size: clamp(6px, 0.9vw, 9px); }
 .card-designation { font-size: clamp(7px, 1.1vw, 11px); }
 .card-id-label    { font-size: clamp(6px, 0.9vw, 9px); }
@@ -226,6 +233,62 @@ button, input, select, textarea { font-family: inherit; }
   .card-meta-label  { font-size: clamp(5px, 0.8vw, 11px); }
   .card-meta-value  { font-size: clamp(8px, 1.2vw, 16px); }
   .privilage-card   { padding: 30px }
+} */
+
+
+/* ============================================================
+   PRIVILEGE CARD — Responsive Font Sizes
+   ============================================================ */
+.card-name        { font-size: 16px; }
+.card-chapter     { font-size: 8px; }
+.card-designation { font-size: 10px; }
+.card-id-label    { font-size: 8px; }
+.card-id-value    { font-size: 12px; }
+.card-meta-label  { font-size: 9px; }
+.card-meta-value  { font-size: 10px; }
+.privilage-card   { padding: 15px }
+
+@media (min-width: 768px) {
+  .card-name        { font-size: 26px; }
+  .card-chapter     { font-size: 14px; }
+  .card-designation { font-size: 18px; }
+  .card-id-label    { font-size: 16px; }
+  .card-id-value    { font-size: 22px; }
+  .card-meta-label  { font-size: 15px; }
+  .card-meta-value  { font-size: 19px; }
+  .privilage-card   { padding: 40px }
+}
+
+@media (min-width: 1280px) {
+  .card-name        { font-size: 18px; }
+  .card-chapter     { font-size: 10px; }
+  .card-designation { font-size: 12px; }
+  .card-id-label    { font-size: 7px; }
+  .card-id-value    { font-size: 15px; }
+  .card-meta-label  { font-size: 7px; }
+  .card-meta-value  { font-size: 12px; }
+  .privilage-card   { padding: 20px }
+}
+
+@media (min-width: 1536px) {
+  .card-name        { font-size: 20px; }
+  .card-chapter     { font-size: 10px; }
+  .card-designation { font-size: 12px; }
+  .card-id-label    { font-size: 9px; }
+  .card-id-value    { font-size: 15px; }
+  .card-meta-label  { font-size: 9px; }
+  .card-meta-value  { font-size: 12px; }
+  .privilage-card   { padding: 20px }
+}
+@media (min-width: 1920px) {
+  .card-name        { font-size: 32px; }
+  .card-chapter     { font-size: 14px; }
+  .card-designation { font-size: 16px; }
+  .card-id-label    { font-size: 11px; }
+  .card-id-value    { font-size: 20px; }
+  .card-meta-label  { font-size: 11px; }
+  .card-meta-value  { font-size: 16px; }
+  .privilage-card   { padding: 40px }
 }
 
 /* ============================================================

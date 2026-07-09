@@ -147,7 +147,7 @@ export function Sidebar({ member }: SidebarProps) {
               }}
               className={`
                 w-full flex !text-white items-center gap-3 px-[20px] 2xl:px-[80px] py-3 rounded-xl mb-1
-                text-[14px] 2xl:text-[18px] font-medium transition-all duration-200 text-left
+                text-14 2xl:text-lg font-medium transition-all duration-200 text-left
                 ${isActive ? "text-white border border-white/20" : "text-white/70 hover:bg-white/10 hover:text-white"}
               `}
               style={
@@ -173,16 +173,16 @@ export function Sidebar({ member }: SidebarProps) {
         })}
       </nav>
       <div className="text-center mx-4 mb-4 mt-8 rounded-2xl overflow-hidden bg-white/10 border border-white/15 p-4">
-        <p className="!text-accent-yellow mb-1 !text-[10px] 2xl:!text-[14px]">
+        <p className="!text-accent-yellow mb-1 !text-sm 2xl:!text-14">
           Featured ·{" "}
-          <span className="!text-white text-[10px] 2xl:!text-[14px]">
+          <span className="!text-white text-sm 2xl:!text-14">
             Trending Now
           </span>
         </p>
-        <h3 className="text-white font-bold text-[20px] leading-tight mb-1">
+        <h3 className="text-white font-bold text-xl leading-tight mb-1">
           Top Privileges This Month
         </h3>
-        <p className="!text-white !text-[10px] 2xl:!text-[14px] !mb-4">
+        <p className="!text-white !text-sm 2xl:!text-14 !mb-4">
           {promoOffers[activeOffer].title}
         </p>
         <div className="mb-3 overflow-hidden rounded-xl">
@@ -198,7 +198,7 @@ export function Sidebar({ member }: SidebarProps) {
           >
             {promoOffers.map((offer, index) => (
               <SwiperSlide key={index}>
-                <div className="relative h-[200px] rounded-xl overflow-hidden">
+                <div className="relative h-[120px] rounded-xl overflow-hidden">
                   <img
                     src={offer.image}
                     alt={offer.title}
@@ -294,10 +294,10 @@ export function Sidebar({ member }: SidebarProps) {
             />
           </div>
           <div className="flex-1 text-left">
-            <p className="!text-white font-semibold text-[18px] leading-tight">
+            <p className="!text-white font-semibold text-sm leading-tight">
               {member.name}
             </p>
-            <p className="!text-accent-yellow text-[16px] mt-1">
+            <p className="!text-accent-yellow text-sm mt-1">
               {member.designation || "Member"}
             </p>
           </div>
@@ -319,7 +319,7 @@ export function Sidebar({ member }: SidebarProps) {
           <div className="mt-1 bg-white/10 border border-white/15 rounded-xl overflow-hidden">
             <button
               onClick={handleLogout}
-              className="w-full flex   items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white text-[13px] transition-colors"
+              className="w-full flex   items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white text-sm transition-colors"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
                 <path
@@ -392,7 +392,7 @@ export function Sidebar({ member }: SidebarProps) {
           {SidebarContent(mobileSidebarRef)}
         </div>
       </div>
-      <aside className="hidden lg:flex flex-col w-[320px] xl:w-[320px] 2xl:w-[400px] flex-shrink-0 relative h-screen sticky top-0">
+      <aside className="hidden lg:flex flex-col w-[320px] xl:w-[280px] 2xl:w-[400px] flex-shrink-0 relative h-screen sticky top-0">
         <img
           src="/images/background.jpg"
           alt=""

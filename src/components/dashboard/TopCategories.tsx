@@ -32,7 +32,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
   if (loading) {
     return (
       <div>
-        <h2 className="text-[18px] font-bold text-dark mb-4">Top Categories</h2>
+        <h2 className="text-lg font-bold text-dark mb-4">Top Categories</h2>
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex flex-col items-center gap-2">
@@ -51,7 +51,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
 
   return (
     <div id="top-categories">
-      <h2 className="text-[18px] font-bold text-dark mb-4">Top Categories</h2>
+      <h2 className="text-lg font-bold text-dark mb-4">Top Categories</h2>
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
         {visibleCategories.map((cat) => {
           const isSelected = selectedCategory === cat.id;
@@ -71,12 +71,12 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
                     className={`w-7 h-7 object-contain ${isSelected ? "brightness-0 invert" : ""}`}
                   />
                 ) : (
-                  <span className={`font-bold text-[18px] ${isSelected ? "text-white" : "text-primary"}`}>
+                  <span className={`font-bold text-lg ${isSelected ? "text-white" : "text-primary"}`}>
                     {cat.name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
-              <span className={`text-[12px] 2xl:text-[14px] transition-colors text-center leading-tight ${
+              <span className={`text-12 2xl:text-14 transition-colors text-center leading-tight ${
                 isSelected ? "text-primary font-semibold" : "text-muted group-hover:text-dark"
               }`}>
                 {cat.name}
@@ -104,7 +104,7 @@ export function TopCategories({ onSelectCategory, selectedCategory }: TopCategor
                 </svg>
               )}
             </div>
-            <span className="text-[12px] text-muted group-hover:text-dark transition-colors text-center leading-tight">
+            <span className="text-12 text-muted group-hover:text-dark transition-colors text-center leading-tight">
               {showAll ? "Less" : "More"}
             </span>
           </button>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer className="w-full bg-[#1A1A1A] text-center py-6 px-4">
@@ -6,8 +8,9 @@ export function Footer() {
       </p>
       <p className="!text-[#aaaaaa] text-sm mt-2">
         © {new Date().getFullYear()} BNI Trivandrum. All rights reserved ·{" "}
-        <a href="#" className="!text-accent-yellow hover:underline">Terms</a> ·{" "}
-        <a href="#" className="!text-accent-yellow hover:underline">Privacy</a>
+        <Link href="/terms-and-conditions" className="!text-accent-yellow hover:underline">
+          Terms &amp; Conditions
+        </Link>
       </p>
     </footer>
   );
