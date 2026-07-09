@@ -225,7 +225,7 @@ export default function ProfilePage() {
     <div className="flex min-h-screen bg-background">
       <Sidebar member={member} />
       <div className="flex-1 flex flex-col min-w-0">
-        <TopBar />
+        <TopBar member={member} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 2xl:p-12">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-xl md:text-2xl 2xl:text-32 font-bold text-dark">
