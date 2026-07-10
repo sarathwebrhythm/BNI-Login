@@ -80,6 +80,25 @@ export async function loginMember(
   return res.json();
 }
 
+//...............................
+export async function loginMemberSSO(
+  email: string
+): Promise<LoginResponse> {
+  const res = await fetch(
+    `${API_BASE_URL}/member/sso-login?email=${encodeURIComponent(email)}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+
+  return res.json();
+}
+
+//............................
+
 export async function forgotPassword(email: string): Promise<ApiResponse> {
   const res = await fetch(`${API_BASE_URL}/member/forgot-password`, {
     method: "POST",

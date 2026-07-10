@@ -70,7 +70,8 @@ export function Sidebar({ member }: SidebarProps) {
     localStorage.removeItem("member");
     sessionStorage.removeItem("member_token");
     sessionStorage.removeItem("member");
-    router.push("/");
+    // router.push("/");
+     window.location.href = "https://portal.bnitvm.com/Member/Dashboard";
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
