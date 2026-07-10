@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { loginMember } from "@/lib/api";
+import { loginMember, loginMemberSSO } from "@/lib/api";
+import { useSearchParams } from "next/navigation";
 
 interface FormData {
   email: string;
@@ -19,6 +20,7 @@ interface FormErrors {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -28,7 +30,68 @@ export function LoginForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSsoLoading, setIsSsoLoading] = useState(false);
+
+  const [showAccessDenied, setShowAccessDenied] = useState(false);
+  const [accessDeniedMessage, setAccessDeniedMessage] = useState("");
+
   // const [apiError, setApiError] = useState<string>("");
+  useEffect(() => {
+    const email = searchParams.get("email");
+
+    if (!email) return;
+
+    setIsSsoLoading(true);
+
+    const ssoLogin = async () => {
+      try {
+        const res = await loginMemberSSO(email);
+
+        if (res.success && res.token && res.member) {
+          const base = process.env.NEXT_PUBLIC_STORAGE_URL || "";
+
+          const toUrl = (path?: string) =>
+            path
+              ? path.startsWith("http")
+                ? path
+                : `${base}${path}`
+              : undefined;
+
+          const member = {
+            ...res.member,
+            profile_photo: toUrl(res.member.profile_photo),
+            cover_photo: toUrl(res.member.cover_photo),
+            business_logo: toUrl(res.member.business_logo),
+          };
+
+          localStorage.setItem("member_token", res.token);
+          localStorage.setItem("member", JSON.stringify(member));
+
+          router.replace("/dashboard");
+        } else {
+          setIsSsoLoading(false);
+
+          setAccessDeniedMessage(
+            "This email is not registered in the BNI Privilege Portal. Please contact the BNI Administrator.",
+          );
+
+          setShowAccessDenied(true);
+        }
+      } catch (error) {
+        console.error(error);
+
+        setIsSsoLoading(false);
+
+        setAccessDeniedMessage(
+          "Unable to connect to the server. Please try again later.",
+        );
+
+        setShowAccessDenied(true);
+      }
+    };
+
+    ssoLogin();
+  }, [searchParams]);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -104,6 +167,41 @@ export function LoginForm() {
     }
     // setApiError("");
   };
+
+  //  loader to show while SSO login is in progress
+  if (isSsoLoading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <div className="w-12 h-12 border-4 border-[#C31526] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (showAccessDenied) {
+    return (
+      <div className="fixed inset-0 bg-background flex items-center justify-center z-50 px-6">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+            <span className="text-primary text-3xl font-bold">!</span>
+          </div>
+
+          <h2 className="mt-6 text-2xl font-bold text-dark">Access Denied</h2>
+
+          <p className="mt-4 text-base text-muted leading-relaxed">
+            This email is not registered in the
+            <br />
+            BNI Privilege Portal.
+            <br />
+            <br />
+            Please contact the BNI Administrator.
+            <br />
+            <br />
+            You can now close this tab and continue using the BNI application.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
