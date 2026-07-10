@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter, Figtree } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   title: "BNI Privilege Card — Trivandrum Member Login",
   description:
     "Sign in to your BNI Trivandrum Privilege Card account. Unlock exclusive member benefits, grow connections, and expand opportunities.",
-      icons: {
+  icons: {
     icon: "/images/favicon.png",
   },
 };
@@ -30,7 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", figtree.variable)}>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <AppLoader>{children}</AppLoader>
+        {/* <AppLoader>{children}</AppLoader> */}
+        <Suspense fallback={null}>
+          <AppLoader>{children}</AppLoader>
+        </Suspense>
         <Toaster
           position="top-center"
           gutter={12}
