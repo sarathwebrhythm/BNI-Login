@@ -54,7 +54,7 @@ export function BusinessHero({ member }: BusinessHeroProps) {
     ? member.business_logo.startsWith("http")
       ? member.business_logo
       : `${process.env.NEXT_PUBLIC_STORAGE_URL}${member.business_logo}`
-    : "/images/logo.png";
+    : "/images/Logo.png";
 
   const handleCreateOffer = async () => {
     setChecking(true);

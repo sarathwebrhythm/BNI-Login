@@ -185,7 +185,8 @@ export function TopBar({ member }: TopBarProps) {
   };
 
   return (
-    <div className="flex justify-end items-center gap-2 px-3 py-2 bg-white border-b border-gray-100 relative">
+    // <div className=" fixed-top flex justify-end items-center gap-2 px-3 py-2 bg-white border-b border-gray-100 relative">
+    <div className="sticky top-0 z-40 flex justify-end items-center gap-2 px-3 py-2 bg-white border-b border-gray-100">
       {/* Saved offers (heart) */}
       <div className="relative" ref={savedRef}>
         <button
