@@ -199,7 +199,7 @@ export function Sidebar({ member }: SidebarProps) {
           >
             {promoOffers.map((offer, index) => (
               <SwiperSlide key={index}>
-                <div className="relative h-[120px] rounded-xl overflow-hidden">
+                <div className="relative h-[120px]   2xl:h-[200px] rounded-xl overflow-hidden">
                   <img
                     src={offer.image}
                     alt={offer.title}
