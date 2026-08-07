@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { TopBar } from "@/components/dashboard/TopBar";
+import { Footer } from "@/components/dashboard/Footer";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -307,7 +308,8 @@ export default function CreateOfferPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 min-[1025px]:grid-cols-2 gap-6">
+             \
               <div className="space-y-5">
                 <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm">
                   <h2 className="text-base 2xl:text-xl font-bold text-dark mb-4">
@@ -693,6 +695,7 @@ export default function CreateOfferPage() {
             </div>
           </form>
         </main>
+          <Footer />
       </div>
     </div>
   );
