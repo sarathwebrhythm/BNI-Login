@@ -316,3 +316,30 @@ export async function getSavedOffers(token: string): Promise<ApiResponse> {
     headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
   });
 }
+
+// ============================================================
+// Contact / Support
+// ============================================================
+
+export interface ContactFormPayload {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
+// Submit a contact/support message
+export async function submitContactForm(
+  data: ContactFormPayload,
+  token: string
+): Promise<ApiResponse> {
+  return apiFetch(`${API_BASE_URL}/member/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}

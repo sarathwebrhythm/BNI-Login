@@ -215,7 +215,7 @@ export function OffersGrid({
               className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
             >
               <div
-                className={`relative h-36 2xl:h-50 bg-gradient-to-br ${bgColors[i % bgColors.length]} flex items-center justify-center overflow-hidden`}
+                className={`relative h-50 2xl:h-70 bg-gradient-to-br ${bgColors[i % bgColors.length]} flex items-center justify-center overflow-hidden`}
               >
                 <span className="absolute top-2 left-2 bg-primary text-white text-2xs md:text-xs font-bold px-2 py-0.5 rounded-md z-10">
                   {offer.discount}
