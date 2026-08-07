@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { TopBar } from "@/components/dashboard/TopBar";
+import { Footer } from "@/components/dashboard/Footer";
 import toast from "react-hot-toast";
 import {
   uploadProfilePhoto,
@@ -389,7 +390,7 @@ export default function ProfilePage() {
                           ? logoUrl.startsWith("http")
                             ? logoUrl
                             : `${process.env.NEXT_PUBLIC_STORAGE_URL}${logoUrl}`
-                          : "/images/logo.png"
+                          : "/images/Logo.png"
                       }
                       alt="Logo"
                       className="w-full h-full object-contain cursor-pointer"
@@ -482,6 +483,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );

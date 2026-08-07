@@ -1,6 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Sidebar } from "@/components/dashboard/Sidebar";
+import { TopBar } from "@/components/dashboard/TopBar";
+import { Footer } from "@/components/dashboard/Footer";
+import type { Member } from "@/types";
 
 interface Section {
   title: string;
@@ -146,72 +151,126 @@ const sections: Section[] = [
 ];
 
 export default function TermsAndConditionsPage() {
+  const router = useRouter();
+  const [member, setMember] = useState<Member | null>(null);
+
+  useEffect(() => {
+    const loadMember = () => {
+      const token =
+        localStorage.getItem("member_token") ||
+        sessionStorage.getItem("member_token");
+      const memberData =
+        localStorage.getItem("member") || sessionStorage.getItem("member");
+      if (!token) {
+        router.push("/");
+        return;
+      }
+      if (memberData) {
+        setMember(JSON.parse(memberData));
+      }
+    };
+
+    loadMember();
+    window.addEventListener("focus", loadMember);
+    return () => window.removeEventListener("focus", loadMember);
+  }, [router]);
+
+  if (!member) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin w-8 h-8 rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-6 py-12 md:py-16">
-        {/* Header */}
-        <div className="mb-10">
-          <p className="text-xl font-semibold uppercase tracking-wide text-primary mb-2">
-            BNI Trivandrum
-          </p>
-          <h1 className="text-2xl md:text-3xl font-bold text-dark">
-            Terms &amp; Conditions
-          </h1>
-          <p className="text-base text-muted mt-2">Effective Date: 10-7-2026</p>
-          <p className="text-base leading-relaxed text-gray-700 mt-4">
-            Welcome to BNI Trivandrum. These Terms and Conditions govern the
-            use of the services, features, and member benefits provided by
-            BNI Trivandrum. By accessing or using BNI Trivandrum, you
-            acknowledge that you have read, understood, and agree to be bound
-            by these Terms and Conditions.
-          </p>
-        </div>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar member={member} />
+      <div className="flex-1 flex flex-col min-w-0">
+        <TopBar member={member} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 2xl:p-12">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-xl md:text-2xl 2xl:text-32 font-bold text-dark">
+              Terms &amp; Conditions
+            </h1>
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm md:text-14 font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(193,20,43,1) 0%, rgba(110,9,20,1) 100%)",
+                boxShadow: "0 1px 37px 0 rgba(251,12,12,0.4)",
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
+                <path
+                  d="M19 12H5M5 12l7 7M5 12l7-7"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Back 
+            </button>
+          </div>
 
-        {/* Content card */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 md:p-10 space-y-8">
-          {sections.map((section) => (
-            <div key={section.title}>
-              <h2 className="text-base md:text-lg font-semibold text-dark mb-2">
-                {section.title}
-              </h2>
-              {section.intro && (
-                <p className="text-base leading-relaxed text-gray-700 mb-2">
-                  {section.intro}
+          <div>
+            {/* Content card */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 md:p-10 space-y-8">
+              {/* Header */}
+              <div>
+                <p className="text-xl font-semibold uppercase tracking-wide text-primary mb-2">
+                  BNI Trivandrum
                 </p>
-              )}
-              {section.bullets && (
-                <ul className="space-y-1.5">
-                  {section.bullets.map((bullet, i) => (
-                    <li
-                      key={i}
-                      className="flex items-start gap-2 text-base leading-relaxed text-gray-700"
-                    >
-                      <span className="text-primary mt-0.5 flex-shrink-0">
-                        •
-                      </span>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {section.outro && (
-                <p className="text-sm leading-relaxed text-gray-700 mt-2">
-                  {section.outro}
+                <p className="text-base text-muted mt-2">
+                  Effective Date: 10-7-2026
                 </p>
-              )}
+                <p className="text-base leading-relaxed text-gray-700 mt-4">
+                  Welcome to BNI Trivandrum. These Terms and Conditions govern
+                  the use of the services, features, and member benefits
+                  provided by BNI Trivandrum. By accessing or using BNI
+                  Trivandrum, you acknowledge that you have read, understood,
+                  and agree to be bound by these Terms and Conditions.
+                </p>
+              </div>
+
+              {sections.map((section) => (
+                <div key={section.title}>
+                  <h2 className="text-base md:text-lg font-semibold text-dark mb-2">
+                    {section.title}
+                  </h2>
+                  {section.intro && (
+                    <p className="text-base leading-relaxed text-gray-700 mb-2">
+                      {section.intro}
+                    </p>
+                  )}
+                  {section.bullets && (
+                    <ul className="space-y-1.5">
+                      {section.bullets.map((bullet, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 text-base leading-relaxed text-gray-700"
+                        >
+                          <span className="text-primary mt-0.5 flex-shrink-0">
+                            •
+                          </span>
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {section.outro && (
+                    <p className="text-sm leading-relaxed text-gray-700 mt-2">
+                      {section.outro}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* Back link */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/dashboard"
-            className="text-sm font-semibold text-primary hover:opacity-80 transition-opacity"
-          >
-            ← Back to Dashboard
-          </Link>
-        </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     </div>
   );

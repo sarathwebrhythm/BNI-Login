@@ -36,7 +36,7 @@ const navItems = [
   },
   {
     label: "Support",
-    href: "#",
+    href: "/dashboard/contact",
     icon: "/images/Vector-29.png",
   },
 ];
