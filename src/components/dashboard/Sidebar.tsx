@@ -116,7 +116,7 @@ export function Sidebar({ member }: SidebarProps) {
           className="object-contain"
         />
       </div>
-      <nav className="flex-1 px-3">
+      <nav className="flex-1 px-3 ">
         {navItems.map((item) => {
           const isActive = activeNav === item.href;
           return (
@@ -173,7 +173,7 @@ export function Sidebar({ member }: SidebarProps) {
           );
         })}
       </nav>
-      <div className="text-center mx-4 mb-4 mt-8 rounded-2xl overflow-hidden bg-white/10 border border-white/15 p-4">
+      {/* <div className="text-center mx-4 mb-4 mt-8 rounded-2xl overflow-hidden bg-white/10 border border-white/15 p-4">
         <p className="!text-accent-yellow mb-1 !text-sm 2xl:!text-14">
           Featured ·{" "}
           <span className="!text-white text-sm 2xl:!text-14">
@@ -216,7 +216,7 @@ export function Sidebar({ member }: SidebarProps) {
             →
           </span>
         </button>
-      </div>
+      </div> */}
       <div className="mx-3 mb-4">
         <button
           onClick={() => {
