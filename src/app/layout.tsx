@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -27,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="font-sans">
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <AppLoader>{children}</AppLoader>
+        {/* <AppLoader>{children}</AppLoader> */}
+        <Suspense fallback={null}>
+          <AppLoader>{children}</AppLoader>
+        </Suspense>
         <Toaster
           position="top-center"
           gutter={12}
