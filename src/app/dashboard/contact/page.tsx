@@ -10,7 +10,7 @@ import { submitContactForm } from "@/lib/api";
 import type { Member } from "@/types";
 
 const WHATSAPP_NUMBER = "919746829444"; // +91 97468 29444
-const SUPPORT_EMAIL = "support@bni.com";
+const SUPPORT_EMAIL = "ajmal@webrhythm.in";
 const SUPPORT_PHONE_DISPLAY = "+91 97468 29444";
 const SUPPORT_PHONE_TEL = "+919746829444";
 
