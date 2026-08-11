@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   X,
   MapPin,
@@ -9,6 +9,7 @@ import {
   Bookmark,
   Share2,
   ArrowRight,
+  Copy,
 } from "lucide-react";
 import { Playfair_Display } from "next/font/google";
 import { PrivilegeCard } from "@/components/dashboard/PrivilegeCard";
@@ -70,11 +71,53 @@ export default function OfferDetailModal({
   const [showCard, setShowCard] = useState(false);
   const [saved, setSaved] = useState(isSaved);
   const [redeemed, setRedeemed] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
 
   const getToken = () =>
     localStorage.getItem("member_token") ||
     sessionStorage.getItem("member_token") ||
     "";
+
+  //.........share button .....................
+  const handleShare = () => {
+    if (!offer) return;
+
+    const message = `Check out this BNI offer:
+
+${offer.business_name || "Business Offer"}
+${offer.discount}
+
+${offer.description || ""}
+
+Valid: ${formatDate(offer.start_date)} – ${formatDate(offer.end_date)}
+
+Please check the BNI app for more details. https://portal.bnitvm.com/`;
+
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, "_blank");
+    setShowShareMenu(false);
+  };
+  const handleCopy = async () => {
+    if (!offer) return;
+
+    const message = `Check out this BNI offer:
+
+${offer.business_name || "Business Offer"}
+${offer.discount}
+
+${offer.description || ""}
+
+Valid: ${formatDate(offer.start_date)} – ${formatDate(offer.end_date)}
+
+Please check the BNI app for more details. https://portal.bnitvm.com/`;
+
+    await navigator.clipboard.writeText(message);
+
+    toast.success("Offer text copied!");
+    setShowShareMenu(false);
+  };
 
   useEffect(() => {
     setSaved(isSaved);
@@ -130,17 +173,34 @@ export default function OfferDetailModal({
   useEffect(() => {
     if (!isOpen) {
       setShowCard(false);
+      setShowShareMenu(false);
       return;
     }
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (showCard) setShowCard(false);
+        if (showShareMenu) setShowShareMenu(false);
+        else if (showCard) setShowCard(false);
         else onClose();
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen, onClose, showCard]);
+  }, [isOpen, onClose, showCard, showShareMenu]);
+
+  // Close the share dropdown when clicking outside it
+  useEffect(() => {
+    if (!showShareMenu) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        shareMenuRef.current &&
+        !shareMenuRef.current.contains(e.target as Node)
+      ) {
+        setShowShareMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showShareMenu]);
 
   if (!isOpen || !offer) return null;
 
@@ -260,22 +320,6 @@ export default function OfferDetailModal({
         </div>
 
         {/* Discount banner */}
-        {/* <div
-          className="mx-6 my-4 flex items-center justify-between rounded-xl px-5 py-4 text-white"
-          style={{ background: "linear-gradient(90deg, rgba(153,20,43,1) 0%, rgba(110,9,20,1) 100%)" }}
-        >
-          <div>
-            <p className="!text-xs font-semibold uppercase tracking-wide !text-accent-yellow">
-              Privilege Discount
-            </p>
-            <p className="text-sm !text-[#f4f4f4] font-medium tracking-wide !mt-0.5">
-              Valid till {formatDate(offer.end_date)}
-            </p>
-          </div>
-          <p className={`${playfair.className} !text-2xl !text-[#f4f4f4] font-bold whitespace-nowrap`}>
-            {offer.discount}
-          </p>
-        </div> */}
         <div
           className="mx-6 my-4 flex flex-col gap-2 rounded-xl px-5 py-4 text-white sm:flex-row sm:items-center sm:justify-between"
           style={{
@@ -399,10 +443,65 @@ export default function OfferDetailModal({
             <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
             {saved ? "Saved" : "Save"}
           </button>
-          <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-            <Share2 size={15} />
-            Share
-          </button>
+
+          <div className="relative flex-1" ref={shareMenuRef}>
+            <button
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              <Share2 size={15} />
+              Share
+            </button>
+
+            {showShareMenu && (
+              <div className="absolute bottom-full right-0 mb-2 w-56 rounded-xl border border-gray-100 bg-white shadow-lg z-50 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    Share Offer
+                  </p>
+                  <button
+                    onClick={() => setShowShareMenu(false)}
+                    aria-label="Close"
+                    className="flex h-5 w-5 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+                  >
+                    <X size={13} />
+                  </button>
+                </div>
+
+                <div className="p-1.5">
+                  <button
+                    onClick={handleShare}
+                    className="group flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left transition-colors hover:bg-[#E7F7EE]"
+                  >
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#E7F7EE] transition-transform duration-200 group-hover:scale-105">
+                      <svg viewBox="0 0 24 24" fill="#25D366" className="w-4 h-4">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                        <path d="M12.001 2C6.478 2 2 6.478 2 12c0 1.821.487 3.53 1.338 5.003L2 22l5.117-1.317A9.955 9.955 0 0012.001 22C17.523 22 22 17.523 22 12S17.523 2 12.001 2zm0 18.181c-1.634 0-3.15-.474-4.432-1.291l-.318-.19-3.05.786.821-2.977-.207-.318A8.163 8.163 0 013.819 12c0-4.518 3.664-8.181 8.182-8.181 4.517 0 8.181 3.663 8.181 8.181 0 4.518-3.664 8.181-8.181 8.181z" />
+                      </svg>
+                    </span>
+                    <span className="text-sm font-medium text-gray-800 whitespace-nowrap">
+                      Share on WhatsApp
+                    </span>
+                  </button>
+
+                  <div className="my-1 h-px bg-gray-100" />
+
+                  <button
+                    onClick={handleCopy}
+                    className="group flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left transition-colors hover:bg-gray-50"
+                  >
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#F6F4F1] text-primary transition-transform duration-200 group-hover:scale-105">
+                      <Copy size={15} />
+                    </span>
+                    <span className="text-sm font-medium text-gray-800 whitespace-nowrap">
+                      Copy Offer Text
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setShowCard(true)}
             className="flex flex-[1.4] items-center justify-center gap-1.5 rounded-lg text-white px-3 py-2.5 text-sm font-semibold transition"
